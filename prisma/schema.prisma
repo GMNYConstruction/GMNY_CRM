@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model accidents {
+  id                  BigInt     @id @default(autoincrement())
+  name                String     @db.VarChar
+  report              String     @db.VarChar
+  efroi               String     @db.VarChar
+  witness             String
+  correspondence      String
+  notice              String
+  accidentDescription String
+  accidentLocation    String     @db.VarChar
+  assignedToCompany   String     @db.VarChar
+  backToWork          String     @db.VarChar
+  companyName         String     @db.VarChar
+  dateOfAccident      String     @db.VarChar
+  documentFolder      String     @db.VarChar
+  firstCheck          String     @db.VarChar
+  lastCheck           String     @db.VarChar
+  lastDayOfWork       String     @db.VarChar
+  comments            comments[]
+}
+
+model comments {
+  id          BigInt    @id @default(autoincrement())
+  caseid      BigInt
+  comment     String
+  userid      BigInt
+  dateCreated String    @db.VarChar
+  accidents   accidents @relation(fields: [caseid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_comments_caseid_fkey")
+  users       users     @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_comments_userid_fkey")
+}
+
+model users {
+  id        BigInt     @id @default(autoincrement())
+  password  String     @db.VarChar
+  name      String     @db.VarChar
+  email     String     @db.VarChar
+  accessLvl String
+  comments  comments[]
+}
