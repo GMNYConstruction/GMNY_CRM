@@ -77,14 +77,9 @@ const Admins = () => {
         .then((res) => res.json())
         .then((json) => {
           setResponse(json.message);
-          json?.error && console.log(json.err);
         });
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
-
-  console.log(response);
 
   return (
     <div className="flex w-screen h-screen justify-center ">
