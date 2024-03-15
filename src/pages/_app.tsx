@@ -2,18 +2,18 @@
 import "../app/globals.css";
 import { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
-import Layout from "@/components/Layout";
 import { StoreProvider } from "@/store/StoreProvider";
+import Layout from "@/components/Layout";
 
 const MyApp = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
   return (
-    <SessionProvider session={session}>
-      <StoreProvider>
+    <StoreProvider>
+      <SessionProvider session={session}>
         <Layout>
           <Component {...pageProps} />
         </Layout>
-      </StoreProvider>
-    </SessionProvider>
+      </SessionProvider>
+    </StoreProvider>
   );
 };
 

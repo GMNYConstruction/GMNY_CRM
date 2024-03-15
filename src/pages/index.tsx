@@ -1,11 +1,13 @@
 "use client";
 import React, { useState } from "react";
 import Image from "next/image";
-import img from "../img/bkLogin.png";
+import img from "../img/bkLogin.webp";
+import logo from "../img/logo.png";
 import { Input } from "../components/Input";
 import { Button } from "@/components/Button";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
+import { log } from "console";
 
 interface User {
   email: string;
@@ -74,7 +76,7 @@ export default function Home() {
       <div className="w-[40vw] h-[100vh] relative flex flex-col justify-between items-center">
         <div className="w-full px-8 py-6 justify-between items-center inline-flex">
           <div className="bg-white rounded-2xl shadow border border-neutral-200 justify-center items-center flex">
-            {/* <img className="w-[48px] h-[48px]" src={img} alt="logo" /> */}
+            <Image className="w-[48px] h-[48px] rounded-2xl" src={logo} alt="logo" />
           </div>
         </div>
 

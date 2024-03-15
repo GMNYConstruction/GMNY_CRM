@@ -18,9 +18,10 @@ const Admins = () => {
     email: "",
     password: "",
     confirmPassword: "",
+    accessLvl: "",
   });
 
-  const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const inputHandler = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     setAdmin((prev) => ({ ...prev, [e.target.id]: e.target.value }));
   };
 
@@ -36,6 +37,7 @@ const Admins = () => {
       email: "",
       password: "",
       confirmPassword: "",
+      accessLvl: "",
     });
 
     if (!admin.email || admin.email.length < 1) {
@@ -63,6 +65,11 @@ const Admins = () => {
       errors++;
     }
 
+    if (!admin.accessLvl) {
+      errorHandler("accessLvl", "Please select access level");
+      errors++;
+    }
+
     if (errors > 0) return;
 
     try {
@@ -77,8 +84,18 @@ const Admins = () => {
         .then((res) => res.json())
         .then((json) => {
           setResponse(json.message);
+          json.message === "User created" &&
+            setAdmin({
+              name: "",
+              email: "",
+              password: "",
+              confirmPassword: "",
+              accessLvl: "",
+            });
         });
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -86,18 +103,28 @@ const Admins = () => {
       <div className="w-[80%] relative py-4 px-2 flex flex-col gap-4">
         <h1>Admins List</h1>
         <form onSubmit={formHandler} className="flex flex-col gap-4 ">
-          <h1>{response}</h1>
+          <h1 className={`font-bold ${response === "User created" ? "text-green-500" : "text-primaryred"} `}>
+            {response}
+          </h1>
           <div className="flex flex-col w-full relative">
-            <div className="w-full relative flex">
+            <p className="text-red-500">{errors.email}</p>
+            <div className="w-full relative flex items-center">
               <label className="w-[10%]" htmlFor="email">
                 Email:
               </label>
-              <Input id="email" type="email" value={admin.email} inputHandler={inputHandler} placeholder="Email" />
+              <Input
+                id="email"
+                type="email"
+                value={admin.email}
+                inputHandler={inputHandler}
+                placeholder="Email"
+                properties={`w-[350px] ${errors.email && "border-red-500"} `}
+              />
             </div>
-            <p className="text-red-500">{errors.email}</p>
           </div>
           <div className="flex flex-col w-full relative">
-            <div className="w-full relative flex">
+            <p className="text-red-500">{errors.password}</p>
+            <div className="w-full relative flex items-center">
               <label className="w-[10%]" htmlFor="password">
                 Password:
               </label>
@@ -107,13 +134,14 @@ const Admins = () => {
                 value={admin.password}
                 inputHandler={inputHandler}
                 placeholder="Password"
+                properties={`w-[350px] ${errors.password && "border-red-500"} `}
               />
             </div>
-            <p className="text-red-500">{errors.password}</p>
           </div>
 
           <div className="flex flex-col w-full relative">
-            <div className="w-full relative flex">
+            <p className="text-red-500">{errors.confirmPassword}</p>
+            <div className="w-full relative flex items-center">
               <label className="w-[10%]" htmlFor="password">
                 Confirm Password:
               </label>
@@ -123,33 +151,49 @@ const Admins = () => {
                 value={admin.confirmPassword}
                 inputHandler={inputHandler}
                 placeholder="Confirm Password"
+                properties={`w-[350px] ${errors.confirmPassword && "border-red-500"} `}
               />
             </div>
-            <p className="text-red-500">{errors.confirmPassword}</p>
           </div>
           <div className="flex flex-col w-full relative">
-            <div className="w-full relative flex">
+            <p className="text-red-500">{errors.name}</p>
+            <div className="w-full relative flex items-center">
               <label className="w-[10%]" htmlFor="name">
                 Name:
               </label>
-              <Input id="name" type="text" value={admin.name} inputHandler={inputHandler} placeholder="Name" />
-            </div>
-            <p className="text-red-500">{errors.name}</p>
-          </div>
-          <div className="flex flex-col w-full relative">
-            <div className="w-full relative flex">
-              <label className="w-[10%]" htmlFor="name">
-                Access Level:
-              </label>
               <Input
-                id="accessLvl"
+                id="name"
                 type="text"
-                value={admin.accessLvl}
+                value={admin.name}
                 inputHandler={inputHandler}
-                placeholder="Access Level"
+                placeholder="Name"
+                properties={`w-[350px] ${errors.name && "border-red-500"}`}
               />
             </div>
-            {/* <p className="text-red-500">{errors.acce}</p> */}
+          </div>
+          <div className="flex flex-col w-full relative">
+            <p className="text-red-500">{errors.accessLvl}</p>
+            <div className="w-full relative flex items-center">
+              <label className="w-[10%]" htmlFor="accessLvl">
+                Access Level:
+              </label>
+              <select
+                name="accessLvl"
+                id="accessLvl"
+                className={`ease-in-out duration-300 w-[350px] p-1 px-4 rounded-md border-2 ${
+                  errors.accessLvl && "border-red-500"
+                }`}
+                onChange={inputHandler}
+                value={admin.accessLvl}
+              >
+                <option value="" disabled>
+                  Access Level
+                </option>
+
+                <option value="moderator">moderator</option>
+                <option value="admin">admin</option>
+              </select>
+            </div>
           </div>
           <Button text="Submit" btype="submit" properties="bg-primaryred text-white" />
         </form>

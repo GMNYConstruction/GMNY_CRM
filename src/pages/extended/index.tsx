@@ -1,12 +1,13 @@
 import React from "react";
-import Link from "next/link";
+import { useGetAccidentById } from "@/hooks/useGetAccidentById";
 
 const Extended = () => {
+  const accidentSelected = useGetAccidentById();
+  console.log(accidentSelected);
   return (
-    <div className="flex w-screen h-screen justify-center ">
-      <div className="w-[80%] h-screen relative">
-        <div className="relative w-full h-full border border-red-500 rounded-md p-2 flex flex-col">
-          <Link href={"/caselist"}>Menu</Link>
+    <div className="flex w-full h-full justify-center ">
+      <div className="w-[90%] relative">
+        <div className="relative w-full h-full flex flex-col">
           <div className="w-full h-[25%] py-4 px-2 rounded-md flex gap-2 ">
             <div className=" border border-black w-[33%]">
               <h1>id: 1232132</h1>

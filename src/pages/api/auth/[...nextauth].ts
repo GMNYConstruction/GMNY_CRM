@@ -14,7 +14,6 @@ secret: process.env.NEXTAUTH_SECRET,
   pages: {
     signIn: '/',
     signOut: '/',
- 
   },
 providers: [
   CredentialsProvider({

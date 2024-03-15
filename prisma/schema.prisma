@@ -8,7 +8,7 @@ datasource db {
 }
 
 model accidents {
-  id                  BigInt     @id @default(autoincrement())
+  id                  Int        @id
   name                String     @db.VarChar
   report              String     @db.VarChar
   efroi               String     @db.VarChar
@@ -17,9 +17,9 @@ model accidents {
   notice              String
   accidentDescription String
   accidentLocation    String     @db.VarChar
-  assignedToCompany   String     @db.VarChar
+  companyWeWorkedFor  String     @db.VarChar
   backToWork          String     @db.VarChar
-  companyName         String     @db.VarChar
+  assignedToCompany   String     @db.VarChar
   dateOfAccident      String     @db.VarChar
   documentFolder      String     @db.VarChar
   firstCheck          String     @db.VarChar
@@ -29,20 +29,20 @@ model accidents {
 }
 
 model comments {
-  id          BigInt    @id @default(autoincrement())
-  caseid      BigInt
+  id          Int       @id
+  caseid      Int
   comment     String
-  userid      BigInt
+  userid      Int
   dateCreated String    @db.VarChar
   accidents   accidents @relation(fields: [caseid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_comments_caseid_fkey")
   users       users     @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_comments_userid_fkey")
 }
 
 model users {
-  id        BigInt     @id @default(autoincrement())
+  id        Int        @id
   password  String     @db.VarChar
   name      String     @db.VarChar
-  email     String     @db.VarChar
+  email     String     @unique @db.VarChar
   accessLvl String
   comments  comments[]
 }
