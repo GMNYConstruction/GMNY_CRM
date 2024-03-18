@@ -11,7 +11,7 @@ export const fetchAccidents = createAsyncThunk("fetch accidents", async (store, 
         const correspondingComments = comments.filter((comment:CommentType) => comment.caseid === accident.id);
         return {
             ...accident,
-            comment: correspondingComments?.map((comment: CommentType) => {
+            comments: correspondingComments?.map((comment: CommentType) => {
                 const commentUser = users.find((user: UsersType)=> comment.userid === user.id)
                 return {
                     ...comment,

@@ -23,8 +23,9 @@ const Layout = ({ children }: PropsType) => {
       {session ? (
         <>
           <SideMenu />
-          <div className="w-full h-screen overflow-x-hidden overflow-y-auto bg-white rounded-tl-[32px] border-l border-t border-neutral-200 px-8 py-4">
-            {children}
+
+          <div className="w-full h-screen overflow-x-hidden bg-white rounded-tl-[32px] border-l border-t border-neutral-200 px-8 py-4">
+            <div>{children}</div>
           </div>
         </>
       ) : (

@@ -1,9 +1,10 @@
 export interface CommentType {
   id: number,
   caseid: number,
-  comments: string,
+  comment: string,
   userid: number,
   dateCreated: string,
+  user?: UsersType
 }
 
 export interface UsersType{ 
@@ -14,23 +15,23 @@ export interface UsersType{
 }
 
 export interface Accidents {
-  id: number;
-  name: string;
-  report: string;
-  efroi: string;
-  witness: string;
-  correspondence: string;
-  notice: string;
-  accidentDescription: string;
-  accidentLocation: string;
-  backToWork: string;
-  dateOfAccident: string;
-  documentFolder: string;
-  firstCheck: string;
-  lastCheck: string;
-  lastDayOfWork: string;
-  companyWeWorkedFor: string;
-  assignedToCompany: string;
+  id: number | undefined;
+  name: string | undefined;
+  report: string | undefined;
+  efroi: string | undefined;
+  witness: string | undefined;
+  correspondence: string | undefined;
+  notice: string | undefined;
+  accidentDescription: string | undefined;
+  accidentLocation: string | undefined;
+  backToWork: string | undefined;
+  dateOfAccident: string | undefined;
+  documentFolder: string | undefined;
+  firstCheck: string | undefined;
+  lastCheck: string | undefined;
+  lastDayOfWork: string | undefined;
+  companyWeWorkedFor: string | undefined;
+  assignedToCompany: string | undefined;
   comments?: CommentType[]
 }
 
