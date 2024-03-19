@@ -18,7 +18,7 @@ const CalendarDrawer: FC<Iprops> = ({ value, change, data, setData, properties }
   };
 
   return (
-    <div className={`relative `}>
+    <div className={`relative w-[70%] `}>
       <DateTime
         input={true}
         dateFormat={"MM/DD/YYYY"}

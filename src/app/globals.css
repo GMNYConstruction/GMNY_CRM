@@ -11,3 +11,11 @@
 .rdtPicker {
   margin-top: 18rem !important;
 }
+
+.form-control {
+  width: 95%;
+}
+
+.form-control:focus {
+  outline: none;
+}

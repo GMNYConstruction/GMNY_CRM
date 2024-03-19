@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@next-auth/prisma-adapter": "^0.4.4-canary.81",
     "@prisma/client": "^5.11.0",
     "@reduxjs/toolkit": "^2.2.1",
     "bcrypt-ts": "^5.0.2",
