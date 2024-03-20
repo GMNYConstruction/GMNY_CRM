@@ -4,6 +4,7 @@ import { Input } from "@/components/Input";
 import { getUsers } from "@/store/store";
 import { useSelector } from "react-redux";
 import { AdminCreate } from "@/types";
+import { getApiResponse } from "@/utils/getApiResponse";
 
 const Admins = () => {
   const { users } = useSelector(getUsers);
@@ -62,30 +63,22 @@ const Admins = () => {
 
     if (errors > 0) return;
 
-    try {
-      await fetch("/api/register", {
-        method: "POST",
-        body: JSON.stringify(admin),
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      })
-        .then((res) => res.json())
-        .then((json) => {
-          setResponse(json.message);
-          json.message === "User created" &&
-            setAdmin({
-              name: "",
-              email: "",
-              password: "",
-              confirmPassword: "",
-              accessLvl: "",
-            });
-        });
-    } catch (error) {
-      console.log(error);
-    }
+    const result = await getApiResponse({ apiRoute: "/api/registerAdmin", body: admin });
+
+    setResponse(result.message);
+
+    result.message === "User Created!" &&
+      setAdmin({
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        accessLvl: "",
+      });
+
+    setTimeout(() => {
+      setResponse("");
+    }, 5000);
   };
 
   return (
@@ -93,7 +86,7 @@ const Admins = () => {
       <div className="w-[80%] relative py-4 px-2 flex flex-col gap-4">
         <h1>Admins List</h1>
         <form onSubmit={formHandler} className="flex flex-col gap-4 ">
-          <h1 className={`font-bold ${response === "User created" ? "text-green-500" : "text-primaryred"} `}>
+          <h1 className={`font-bold ${response === "User Created!" ? "text-green-500" : "text-primaryred"} `}>
             {response}
           </h1>
           <div className="flex flex-col w-full relative">

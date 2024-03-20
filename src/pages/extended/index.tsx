@@ -4,17 +4,19 @@ import { useGetAccidentById } from "@/hooks/useGetAccidentById";
 import { useDispatch } from "react-redux";
 import { editAccidents } from "@/store/Accidents/editAccidents";
 import { AppDispatch } from "@/store/store";
-import { Accidents, CommentType } from "@/types";
+import { Accidents, CommentType, AuthUser } from "@/types";
 import { Input } from "@/components/Input";
 import CalendarDrawer from "@/components/Calendar";
+import bin from "../../img/rubbish-bin-svgrepo-com.svg";
 import { TextArea } from "@/components/TextArea";
 import { Button } from "@/components/Button";
 import { getApiResponse } from "@/utils/getApiResponse";
+import Image from "next/image";
 
 const Extended = () => {
   const today = new Date().toLocaleDateString("en-US");
   const { data: session } = useSession();
-  const user = session?.user as any;
+  const user = session?.user as AuthUser;
   const accidentSelected = useGetAccidentById();
   const dispatch = useDispatch<AppDispatch>();
   const [readOnly, setReadOnly] = useState(true);
@@ -60,26 +62,11 @@ const Extended = () => {
 
     setResponse(result.message);
 
-    if (accidentSelected && accidentSelected.comments && result.message === "Update Successful") {
+    if (accidentSelected && accidentSelected.comments && result.message === "Accident Updateed Successfuly!") {
       dispatch(
         editAccidents({
           ...accidentSelected,
-          name: accident?.name,
-          report: accident?.report,
-          efroi: accident?.efroi,
-          witness: accident?.witness,
-          correspondence: accident?.correspondence,
-          notice: accident?.notice,
-          accidentDescription: accident?.accidentDescription,
-          accidentLocation: accident?.accidentLocation,
-          backToWork: accident?.backToWork,
-          dateOfAccident: accident?.dateOfAccident,
-          documentFolder: accident?.documentFolder,
-          firstCheck: accident?.firstCheck,
-          lastCheck: accident?.lastCheck,
-          lastDayOfWork: accident?.lastDayOfWork,
-          companyWeWorkedFor: accident?.companyWeWorkedFor,
-          assignedToCompany: accident?.assignedToCompany,
+          ...accident,
         })
       );
     }
@@ -94,33 +81,47 @@ const Extended = () => {
     event.preventDefault();
 
     const result = await getApiResponse({ apiRoute: "/api/postNewComment", body: comment });
-
     setCommentResponse(result.message);
 
     if (accidentSelected && accidentSelected.comments && result.message === "Comment posted successfuly!") {
       dispatch(
         editAccidents({
           ...accidentSelected,
-          comments: [...accidentSelected.comments, comment],
+          comments: [...accidentSelected.comments, { ...comment, id: result.id } as CommentType],
         })
       );
 
       setComment((prev) => ({
         ...prev,
         comment: "",
-        id: result.id++ || 0,
       }));
     }
+
     setTimeout(() => {
-      setResponse("");
+      setCommentResponse("");
     }, 5000);
+  };
+
+  const deleteComment = async (id: number, caseindex: number) => {
+    const res = await getApiResponse({ apiRoute: "/api/deleteComment", body: { id: id, userid: user.id } });
+
+    if (res.message === "Comment deleted!" && accidentSelected && accidentSelected.comments) {
+      dispatch(
+        editAccidents({
+          ...accidentSelected,
+          comments: accidentSelected.comments.filter((item) => item.id !== id),
+        })
+      );
+    }
   };
 
   return (
     <div className="flex flex-col w-full justify-center items-center ">
       <form onSubmit={formHandler} className="flex flex-col  w-[90%] justify-center">
         <div className="flex w-full justify-between gap-4 px-2">
-          <h1 className={`${response === "Update Successful" ? "text-green-600" : "text-red-500"}`}>{response}</h1>
+          <h1 className={`${response === "Accident Updateed Successfuly!" ? "text-green-600" : "text-red-500"}`}>
+            {response}
+          </h1>
           <div className="flex gap-4">
             {!readOnly && <Button text="Save" btype="submit" />}
             <Button
@@ -199,15 +200,21 @@ const Extended = () => {
                 </div>
 
                 <div className="flex items-center">
-                  <h1 className="w-[30%]">documentFolder:</h1>
-                  <Input
-                    properties={`w-[70%]`}
-                    value={accident.documentFolder}
-                    inputHandler={handleChange}
-                    id="documentFolder"
-                    placeholder="Enter link to folder"
-                    readonly={readOnly}
-                  />
+                  <h1 className="w-[30%]">
+                    <a href={accident.documentFolder} target="_blank">
+                      Document Folder
+                    </a>
+                  </h1>
+                  {!readOnly && (
+                    <Input
+                      properties={`w-[70%]`}
+                      value={accident.documentFolder}
+                      inputHandler={handleChange}
+                      id="documentFolder"
+                      placeholder="Enter link to folder"
+                      readonly={readOnly}
+                    />
+                  )}
                 </div>
               </div>
 
@@ -330,7 +337,7 @@ const Extended = () => {
           </div>
         </div>
       </form>
-      <form onSubmit={formCommentHandler} className="w-[90%] flex flex-col gap-2 overflow-auto">
+      <form onSubmit={formCommentHandler} className="w-[90%] flex flex-col gap-2 ">
         <h1 className="w-[35%]">Comments: </h1>
         <div className="flex flex-col gap-3 ">
           <div className="flex flex-col gap-2">
@@ -347,13 +354,22 @@ const Extended = () => {
             <Button text="Post comment" btype="submit" properties={`bg-primaryred text-white`} />
           </div>
 
-          {accidentSelected?.comments?.map((comment) => {
+          {accidentSelected?.comments?.map((comment, index) => {
             return (
-              <div key={comment.id} className="rounded-md py-2 px-1 flex flex-col gap-1">
-                <h1 className="w-full border-b pl-6 border-neutral-500">{comment.comment}</h1>
+              <div key={comment.id} className="rounded-md p-2 flex flex-col gap-1 relative">
+                <h1 className="w-[95%] border-b border-neutral-500">{comment.comment}</h1>
                 <span>
                   {comment.user?.name} {comment.dateCreated}
                 </span>
+                {comment.userid === user.id && (
+                  <button
+                    type="button"
+                    onClick={() => deleteComment(comment.id, index)}
+                    className="absolute right-[2%] top-[25%]"
+                  >
+                    <Image className="h-[25px] w-[25px]" alt="delete" src={bin} />
+                  </button>
+                )}
               </div>
             );
           })}

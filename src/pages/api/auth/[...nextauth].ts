@@ -63,7 +63,10 @@ callbacks: {
         accessLvl: token.accessLvl,
       }
     };
-  }
+  },
+  async authorized({ req, token } : any) {
+     if(token) return true // If there is a token, the user is authenticated
+   }
 },
 secret: process.env.NEXTAUTH_SECRET,
   session: {
@@ -73,10 +76,6 @@ secret: process.env.NEXTAUTH_SECRET,
     signIn: '/',
     signOut: '/',
   },  
-
- 
-
-
  
 }
 

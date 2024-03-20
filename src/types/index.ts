@@ -55,3 +55,10 @@ export interface AdminCreate {
     confirmPassword: string;
     accessLvl: string;
 }
+
+export interface AuthUser {
+  name: string,
+  id: number,
+  accessLvl: 'admin' | 'moderator',
+  email: string,
+}

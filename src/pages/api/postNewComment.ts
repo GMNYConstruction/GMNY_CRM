@@ -10,6 +10,11 @@ const postNewComment = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const data = req.body;
 
+  if(!data || !data.caseid || !data.comment || !data.userid || !data.dateCreated) {
+    return res.status(400).json({message: "Data Is Missing"});
+  }
+
+
  try{
     
     const comment = await prisma.comments.create({
