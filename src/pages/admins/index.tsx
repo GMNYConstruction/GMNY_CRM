@@ -1,25 +1,15 @@
 import React, { useState } from "react";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
-import register from "../api/register";
-import { access } from "fs";
+import { getUsers } from "@/store/store";
+import { useSelector } from "react-redux";
+import { AdminCreate } from "@/types";
 
 const Admins = () => {
-  const [admin, setAdmin] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    accessLvl: "",
-  });
+  const { users } = useSelector(getUsers);
+  const [admin, setAdmin] = useState({} as AdminCreate);
   const [response, setResponse] = useState("");
-  const [errors, setErrors] = useState({
-    name: "",
-    email: "",
-    password: "",
-    confirmPassword: "",
-    accessLvl: "",
-  });
+  const [errors, setErrors] = useState({} as AdminCreate);
 
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     setAdmin((prev) => ({ ...prev, [e.target.id]: e.target.value }));

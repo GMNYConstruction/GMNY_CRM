@@ -8,7 +8,7 @@ datasource db {
 }
 
 model accidents {
-  id                  Int        @id
+  id                  Int        @id @default(autoincrement())
   name                String     @db.VarChar
   report              String     @db.VarChar
   efroi               String     @db.VarChar
@@ -17,9 +17,9 @@ model accidents {
   notice              String
   accidentDescription String
   accidentLocation    String     @db.VarChar
-  companyWeWorkedFor  String     @db.VarChar
-  backToWork          String     @db.VarChar
   assignedToCompany   String     @db.VarChar
+  backToWork          String     @db.VarChar
+  companyWeWorkedFor  String     @db.VarChar
   dateOfAccident      String     @db.VarChar
   documentFolder      String     @db.VarChar
   firstCheck          String     @db.VarChar
@@ -29,7 +29,7 @@ model accidents {
 }
 
 model comments {
-  id          Int       @id
+  id          Int       @id @default(autoincrement())
   caseid      Int
   comment     String
   userid      Int
@@ -39,10 +39,10 @@ model comments {
 }
 
 model users {
-  id        Int        @id
+  id        Int        @id @default(autoincrement())
   password  String     @db.VarChar
   name      String     @db.VarChar
-  email     String     @unique @db.VarChar
+  email     String     @db.VarChar
   accessLvl String
   comments  comments[]
 }

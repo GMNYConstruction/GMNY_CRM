@@ -11,11 +11,11 @@ const Page = () => {
   const filterList = () => {
     return accidents?.filter((e: Accidents) => {
       if (
-        e.name.toLowerCase().includes(search.toLowerCase()) ||
-        e.dateOfAccident.toString().toLowerCase().includes(search.toLowerCase()) ||
-        e.accidentLocation.toLowerCase().includes(search.toLowerCase()) ||
-        e.assignedToCompany.toLowerCase().includes(search.toLowerCase()) ||
-        e.companyWeWorkedFor.toLowerCase().includes(search.toLowerCase())
+        e.name?.toLowerCase().includes(search.toLowerCase()) ||
+        e.dateOfAccident?.toString().toLowerCase().includes(search.toLowerCase()) ||
+        e.accidentLocation?.toLowerCase().includes(search.toLowerCase()) ||
+        e.assignedToCompany?.toLowerCase().includes(search.toLowerCase()) ||
+        e.companyWeWorkedFor?.toLowerCase().includes(search.toLowerCase())
       )
         return e;
     });

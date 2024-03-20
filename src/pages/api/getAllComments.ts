@@ -8,7 +8,11 @@ const GetAllComments = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
  try{
-    const response = await prisma.comments.findMany();
+    const response = await prisma.comments.findMany({
+      orderBy: {
+        id: "desc",
+      },
+    });
     return res.json(response);
  }
  catch(err) {

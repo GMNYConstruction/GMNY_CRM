@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchAccidents } from './fetch';
-import { editAccidents } from './put';
+import { editAccidents } from './editAccidents';
 import { Accidents } from '@/types';
 
 const initialState = {

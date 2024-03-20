@@ -47,3 +47,11 @@ export interface AccidentCardInterface {
     [key: string]: string | number;
   };
 }
+
+export interface AdminCreate {
+    name: string;
+    email: string;
+    password: string,
+    confirmPassword: string;
+    accessLvl: string;
+}
