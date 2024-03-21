@@ -1,5 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchUsers } from './fetch'; 
+import { editUser } from './editUser';
+import { UsersType } from '@/types';
 
 const initialState = {
   users: [] as any,
@@ -29,6 +31,24 @@ export const allUsers = createSlice({
         state.errorUser = false;
         state.loadingUser = true;
       });
+      builder.addCase(editUser.fulfilled, (state, action) => {
+        const selectedUserIndex = state.users.findIndex((user:UsersType) => user.id === action?.payload?.id);
+        state.users[selectedUserIndex] = action.payload;
+        state.fetchedUser = true;
+        state.loadingUser = false;
+        state.errorUser = false;
+      });
+      builder.addCase(editUser.rejected, (state, action) => {
+        state.fetchedUser = true;
+        state.loadingUser = false;
+        state.errorUser = true;
+      });
+      builder.addCase(editUser.pending, (state, action) => {
+        state.fetchedUser = false;
+        state.errorUser = false;
+        state.loadingUser = true;
+      });
+  
     }
 })
  

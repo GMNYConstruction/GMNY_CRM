@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useGetAccidentById } from "@/hooks/useGetAccidentById";
 import { useDispatch } from "react-redux";
-import { editAccidents } from "@/store/Accidents/editAccidents";
+import { editAccident } from "@/store/Accidents/editAccident";
 import { AppDispatch } from "@/store/store";
 import { Accidents, CommentType, AuthUser } from "@/types";
 import { Input } from "@/components/Input";
@@ -65,7 +65,7 @@ const Extended = () => {
 
     if (accidentSelected && accidentSelected.comments && result.message === "Accident Updateed Successfuly!") {
       dispatch(
-        editAccidents({
+        editAccident({
           ...accidentSelected,
           ...accident,
         })
@@ -86,7 +86,7 @@ const Extended = () => {
 
     if (accidentSelected && accidentSelected.comments && result.message === "Comment posted successfuly!") {
       dispatch(
-        editAccidents({
+        editAccident({
           ...accidentSelected,
           comments: [...accidentSelected.comments, { ...comment, id: result.id } as CommentType],
         })
@@ -108,7 +108,7 @@ const Extended = () => {
 
     if (res.message === "Comment deleted!" && accidentSelected && accidentSelected.comments) {
       dispatch(
-        editAccidents({
+        editAccident({
           ...accidentSelected,
           comments: accidentSelected.comments.filter((item) => item.id !== id),
         })

@@ -15,6 +15,7 @@ const GetAllUsers = async (req: NextApiRequest, res: NextApiResponse) => {
          name: true,
          accessLvl: true,
          password: false,
+         status: true,
   },
     });
     return res.json(response);

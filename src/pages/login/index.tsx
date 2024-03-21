@@ -7,24 +7,31 @@ import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
+import { notFound } from "next/navigation";
 
 interface User {
   email: string;
   password: string;
 }
 
+interface Errors {
+  email: string;
+  password: string;
+  notFound: string | null | undefined;
+}
+
 export default function Home() {
   const year = new Date().getFullYear();
   const router = useRouter();
-  const [user, setUser] = useState<User>({
+  const [user, setUser] = useState({
     email: "",
     password: "",
   });
 
   const [errors, setError] = useState({
-    notFound: "",
     email: "",
     password: "",
+    notFound: "",
   });
 
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,7 +70,7 @@ export default function Home() {
       callbackUrl: "/",
     });
 
-    res?.ok ? router.push("/caselist") : errorHandler("notFound", "Wrong email or password!");
+    res?.ok ? router.push("/caselist") : errorHandler("notFound", `${res?.error}`);
   };
 
   return (

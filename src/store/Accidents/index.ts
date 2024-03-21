@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { fetchAccidents } from './fetch';
-import { editAccidents } from './editAccidents';
+import { editAccident } from './editAccident';
 import { Accidents } from '@/types';
 
 const initialState = {
@@ -31,7 +31,7 @@ export const allAccidents = createSlice({
         state.error = false;
         state.loading = true;
       });
-      builder.addCase(editAccidents.fulfilled, (state, action) => {
+      builder.addCase(editAccident.fulfilled, (state, action) => {
         const selectedAccidentIndex = state.accidents.findIndex((accident:Accidents) => accident.id === action?.payload?.id);
         state.accidents[selectedAccidentIndex] = action.payload;
 
@@ -39,12 +39,12 @@ export const allAccidents = createSlice({
         state.loading = false;
         state.error = false;
       });
-      builder.addCase(editAccidents.rejected, (state, action) => {
+      builder.addCase(editAccident.rejected, (state, action) => {
         state.fetched = true;
         state.loading = false;
         state.error = true;
       });
-      builder.addCase(editAccidents.pending, (state, action) => {
+      builder.addCase(editAccident.pending, (state, action) => {
         state.fetched = false;
         state.error = false;
         state.loading = true;

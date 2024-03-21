@@ -3,17 +3,17 @@ import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import { getUsers } from "@/store/store";
 import { useSelector } from "react-redux";
-import { AdminCreate } from "@/types";
+import { AdminCreate, UsersType } from "@/types";
 import { getApiResponse } from "@/utils/getApiResponse";
 import AdminCard from "@/components/AdminCard";
 import { stat } from "fs";
+import Select from "@/components/Select";
 
 const Admins = () => {
   const { users } = useSelector(getUsers);
   const [admin, setAdmin] = useState({} as AdminCreate);
   const [response, setResponse] = useState("");
   const [errors, setErrors] = useState({} as AdminCreate);
-  const [status, setStatus] = useState("");
 
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     setAdmin((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -65,6 +65,11 @@ const Admins = () => {
       errors++;
     }
 
+    if (!admin.status) {
+      errorHandler("status", "Please select status");
+      errors++;
+    }
+
     if (errors > 0) return;
 
     const result = await getApiResponse({ apiRoute: "/api/registerAdmin", body: admin });
@@ -87,7 +92,7 @@ const Admins = () => {
   };
 
   return (
-    <div className="flex w-screen h-full justify-center ">
+    <div className="flex w-full h-full justify-center">
       <div className="w-[80%] relative py-4 px-2 flex flex-col gap-4">
         <h1>Admins List</h1>
         <form onSubmit={formHandler} className="flex flex-col gap-4 ">
@@ -165,44 +170,44 @@ const Admins = () => {
               <label className="w-[10%]" htmlFor="accessLvl">
                 Access Level:
               </label>
-              <select
-                name="accessLvl"
+              <Select
                 id="accessLvl"
-                className={`ease-in-out duration-300 w-[350px] p-1 px-4 rounded-md border-2 ${
+                options={["admin", "moderator"]}
+                properties={`ease-in-out duration-300 w-[350px] p-1 px-4 rounded-md border-2 ${
                   errors.accessLvl && "border-red-500"
                 }`}
-                onChange={inputHandler}
                 value={admin.accessLvl}
-              >
-                <option value="" disabled>
-                  Access Level
-                </option>
-
-                <option value="moderator">moderator</option>
-                <option value="admin">admin</option>
-              </select>
+                placeholder="Access Level"
+                inputHandler={inputHandler}
+              />
             </div>
           </div>
-          <div className="w-full relative flex items-center">
-            <label className="w-[10%]" htmlFor="accessLvl">
-              Status:
-            </label>
-            <select
-              name="accessLvl"
-              id="accessLvl"
-              className={`ease-in-out duration-300 w-[350px] p-1 px-4 rounded-md border-2 ${
-                errors.accessLvl && "border-red-500"
-              }`}
-              onChange={(e) => setAdmin((prev) => ({ ...prev, status: e.target.value === "true" ? true : false }))}
-            >
-              <option value={"true"}>Active</option>
-              <option value={"false"}>Disabled</option>
-            </select>
+          <div className="flex flex-col w-full relative">
+            <p className="text-red-500">{errors.name}</p>
+            <div className="w-full relative flex items-center">
+              <label className="w-[10%]" htmlFor="accessLvl">
+                Status:
+              </label>
+
+              <Select
+                id="status"
+                options={["Active", "Disabled"]}
+                properties={`ease-in-out w-[350px] duration-300 p-1 px-4 rounded-md border-2 ${
+                  errors.status && "border-red-500"
+                }`}
+                placeholder="Status"
+                inputHandler={(e) =>
+                  setAdmin((prev) => ({ ...prev, status: e.target.value.toLowerCase() === "active" ? true : false }))
+                }
+              />
+            </div>
           </div>
           <Button text="Submit" btype="submit" properties="bg-primaryred text-white" />
         </form>
-        <div className="flex flex-col">
-          <AdminCard />
+        <div className="flex flex-col mt-6 gap-4">
+          {users?.map((user: UsersType) => {
+            return <AdminCard key={user.id} user={user} />;
+          })}
         </div>
       </div>
     </div>
