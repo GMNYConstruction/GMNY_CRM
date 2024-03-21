@@ -44,5 +44,6 @@ model users {
   name      String     @db.VarChar
   email     String     @db.VarChar
   accessLvl String
+  status    Boolean?
   comments  comments[]
 }

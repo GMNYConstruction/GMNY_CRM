@@ -1,5 +1,7 @@
 import React from "react";
 import img from "../img/logo.png";
+import accident from "../img/accident-svgrepo-com.svg";
+import admins from "../img/user-admin-svgrepo-com.svg";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -20,22 +22,15 @@ export const SideMenu = () => {
       <div className="w-60 flex-col gap-y-4 flex ">
         <div className={`flex justify-between w-full px-4 py-2.5 ${route === "/caselist" ? activeClass : ""}`}>
           <Link className="flex items-center gap-1 ext-neutral-900 text-sm font-normal  leading-tight" href="/caselist">
-            {/* <img className="w-[20px] h-[20px]" src={home} alt="" /> */}
+            <Image className="w-[20px] h-[20px]" src={accident} alt="image" />
             Case List
           </Link>
         </div>
 
         <div className={`flex justify-between w-full px-4 py-2.5 ${route === "/admins" ? activeClass : ""}`}>
           <Link className="flex items-center gap-1 ext-neutral-900 text-sm font-normal  leading-tight " href="/admins">
-            {/* <img className="w-[20px] h-[20px]" src={delivery} alt="" /> */}
+            <Image className="w-[20px] h-[20px]" src={admins} alt="image" />
             Admins
-          </Link>
-        </div>
-
-        <div className={`flex justify-between w-full px-4 py-2.5 ${route === "/testpage" ? activeClass : ""}`}>
-          <Link className="flex items-center gap-1 ext-neutral-900 text-sm font-normal  leading-tight" href="/testpage">
-            {/* <img className="w-[20px] h-[20px]" src={loads} alt="" /> */}
-            Test Page
           </Link>
         </div>
       </div>

@@ -1,3 +1,11 @@
+export interface UsersType{ 
+  id: number,
+  name: string,
+  email: string,
+  accessLvl: string,
+  status: boolean | null,
+}
+
 export interface CommentType {
   id: number,
   caseid: number,
@@ -5,13 +13,6 @@ export interface CommentType {
   userid: number,
   dateCreated: string,
   user?: UsersType
-}
-
-export interface UsersType{ 
-  id: number,
-  name: string,
-  email: string,
-  accessLvl: string,
 }
 
 export interface Accidents {
@@ -54,11 +55,14 @@ export interface AdminCreate {
     password: string,
     confirmPassword: string;
     accessLvl: string;
+    status: boolean | null;
 }
+
 
 export interface AuthUser {
   name: string,
   id: number,
   accessLvl: 'admin' | 'moderator',
   email: string,
+  status: boolean | null,
 }

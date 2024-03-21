@@ -39,6 +39,7 @@ const Extended = () => {
           email: user?.email,
           name: user?.name,
           accessLvl: user?.accessLvl,
+          status: user?.status,
         },
       }));
     }

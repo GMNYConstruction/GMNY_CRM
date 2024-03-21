@@ -11,11 +11,11 @@ const UpdateSelecteddata = async (req: NextApiRequest, res: NextApiResponse) => 
   const data = req.body;
 
 
-  if (!data || !data.name || !data.report || !data.efroi || !data.witness || !data.correspondence || !data.notice || !data.accidentDescription 
-    || !data.accidentLocation || !data.backToWork || !data.dateOfAccident || !data.documentFolder || !data.firstCheck || !data.lastCheck || !data.lastDayOfWork || !data.companyWeWorkedFor
-    || !data.assignedToCompany
-    )
-    return res.status(400).json({message: "Data Is Missing!"});
+  // if (!data || !data.name || !data.report || !data.efroi || !data.witness || !data.correspondence || !data.notice || !data.accidentDescription 
+  //   || !data.accidentLocation || !data.backToWork || !data.dateOfAccident || !data.documentFolder || !data.firstCheck || !data.lastCheck || !data.lastDayOfWork || !data.companyWeWorkedFor
+  //   || !data.assignedToCompany
+  //   )
+  //   return res.status(400).json({message: "Data Is Missing!"});
 
 
  try{

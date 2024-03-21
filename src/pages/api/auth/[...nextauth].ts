@@ -21,6 +21,7 @@ providers: [
       const res = await prisma.users.findMany({
         where:{
           email: credentials?.email,
+          status: true,
         }
       });
  
@@ -61,6 +62,7 @@ callbacks: {
         ...session.user,
         id: token.id,
         accessLvl: token.accessLvl,
+        status: token.status,
       }
     };
   },
@@ -73,8 +75,8 @@ secret: process.env.NEXTAUTH_SECRET,
      strategy: 'jwt' as const 
     },
   pages: {
-    signIn: '/',
-    signOut: '/',
+    signIn: '/login',
+    signOut: '/login',
   },  
  
 }
