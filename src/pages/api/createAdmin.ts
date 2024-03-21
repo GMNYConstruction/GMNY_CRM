@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../prisma";
 import { hash } from "bcrypt-ts";
 
-const RegisterAdmin = async (req: NextApiRequest, res: NextApiResponse) => {
+const CreateAdmin = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
     return res.status(400).json({ message: "Wrong Method" });
   }
@@ -32,4 +32,4 @@ const RegisterAdmin = async (req: NextApiRequest, res: NextApiResponse) => {
 
 };
 
-export default RegisterAdmin;
+export default CreateAdmin;

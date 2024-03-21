@@ -1,11 +1,12 @@
 import { UsersType } from "@/types";
-import React, { FC, useState } from "react";
+import React, { FC, use, useState } from "react";
 import { Button } from "./Button";
 import { useDispatch } from "react-redux";
 import { editUser } from "@/store/Users/editUser";
 import { AppDispatch } from "@/store/store";
 import { Input } from "./Input";
-import { read } from "fs";
+import { Select } from "./Select";
+import { getApiResponse } from "@/utils/getApiResponse";
 
 interface IProps {
   user: UsersType;
@@ -15,6 +16,7 @@ const AdminCard: FC<IProps> = ({ user }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [changedUser, setChangedUser] = useState<UsersType>(user);
   const [readOnly, setReadOnly] = useState(true);
+  const [response, setResponse] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     setChangedUser((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -25,22 +27,59 @@ const AdminCard: FC<IProps> = ({ user }) => {
     !readOnly && setChangedUser(user);
   };
 
-  const handleStatus = () => {
-    dispatch(
-      editUser({
-        ...user,
+  const handleStatus = async () => {
+    const response = await getApiResponse({
+      apiRoute: "/api/updateUserStatus",
+      body: { id: user.id, status: !user.status },
+    });
+
+    setResponse(response.message);
+
+    if (response.message === "User Updated Successfuly!") {
+      dispatch(
+        editUser({
+          ...user,
+          status: !user.status,
+        })
+      );
+      setChangedUser((prev) => ({
+        ...prev,
         status: !user.status,
-      })
-    );
+      }));
+    }
+
+    setTimeout(() => {
+      setResponse("");
+    }, 5000);
   };
 
-  const handleChangeSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleChangeSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const response = await getApiResponse({ apiRoute: "/api/updateSelectedUser", body: changedUser });
+
+    setResponse(response.message);
+
+    if (response.message === "User Updated Successfuly!") {
+      dispatch(
+        editUser({
+          ...user,
+          ...changedUser,
+        })
+      );
+      setReadOnly(!readOnly);
+    }
+
+    setTimeout(() => {
+      setResponse("");
+    }, 5000);
   };
 
   return (
-    <div key={user.id} className="flex flex-col gap-4">
-      <form onSubmit={handleChangeSubmit} className="grid grid-cols-2 w-full gap-2">
+    <form onSubmit={handleChangeSubmit} key={user.id} className="flex flex-col gap-4">
+      <h1 className={` ${response === "User Updated Successfuly!" ? "text-green-600" : "text-primaryred"}`}>
+        {response}
+      </h1>
+      <div className="grid grid-cols-2 w-full gap-2">
         <div className="flex flex-col gap-2">
           <div className="grid grid-cols-[1fr,4fr] items-center gap-2">
             <h1>Name:</h1>
@@ -70,13 +109,13 @@ const AdminCard: FC<IProps> = ({ user }) => {
         <div className="flex flex-col gap-2">
           <div className="grid grid-cols-[1fr,4fr] items-center gap-2">
             <h1>Access Lvl:</h1>
-            <Input
-              placeholder="Access Level"
+            <Select
               id="accessLvl"
-              type="text"
+              options={["admin", "moderator"]}
               value={changedUser.accessLvl}
-              inputHandler={handleChange}
+              placeholder="Access Level"
               properties={`${readOnly && "border-transparent pointer-events-none"}`}
+              inputHandler={handleChange}
               readonly={readOnly}
             />
           </div>
@@ -85,7 +124,7 @@ const AdminCard: FC<IProps> = ({ user }) => {
             <h1 className="p-1 px-4">{user.status ? "Active" : "Disabled"}</h1>
           </div>
         </div>
-      </form>
+      </div>
       <div className="flex gap-6">
         {readOnly ? (
           <Button
@@ -105,7 +144,7 @@ const AdminCard: FC<IProps> = ({ user }) => {
           properties={`w-[200px] bg-primaryred text-white`}
         />
       </div>
-    </div>
+    </form>
   );
 };
 

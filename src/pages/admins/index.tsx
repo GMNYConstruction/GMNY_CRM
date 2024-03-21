@@ -72,7 +72,7 @@ const Admins = () => {
 
     if (errors > 0) return;
 
-    const result = await getApiResponse({ apiRoute: "/api/registerAdmin", body: admin });
+    const result = await getApiResponse({ apiRoute: "/api/createAdmin", body: admin });
 
     setResponse(result.message);
 
@@ -92,7 +92,7 @@ const Admins = () => {
   };
 
   return (
-    <div className="flex w-full h-full justify-center">
+    <div className="flex w-full justify-center">
       <div className="w-[80%] relative py-4 px-2 flex flex-col gap-4">
         <h1>Admins List</h1>
         <form onSubmit={formHandler} className="flex flex-col gap-4 ">

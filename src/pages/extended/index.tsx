@@ -63,7 +63,7 @@ const Extended = () => {
 
     setResponse(result.message);
 
-    if (accidentSelected && accidentSelected.comments && result.message === "Accident Updateed Successfuly!") {
+    if (accidentSelected && accidentSelected.comments && result.message === "Accident Updated Successfuly!") {
       dispatch(
         editAccident({
           ...accidentSelected,
@@ -120,7 +120,7 @@ const Extended = () => {
     <div className="flex flex-col w-full justify-center items-center ">
       <form onSubmit={formHandler} className="flex flex-col  w-[90%] justify-center">
         <div className="flex w-full justify-between gap-4 px-2">
-          <h1 className={`${response === "Accident Updateed Successfuly!" ? "text-green-600" : "text-red-500"}`}>
+          <h1 className={`${response === "Accident Updated Successfuly!" ? "text-green-600" : "text-red-500"}`}>
             {response}
           </h1>
           <div className="flex gap-4">

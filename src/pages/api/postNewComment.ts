@@ -3,7 +3,7 @@ import prisma from "../../../prisma";
 import { json } from "stream/consumers";
  
 
-const postNewComment = async (req: NextApiRequest, res: NextApiResponse) => {
+const PostNewComment = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
     return res.status(400).json({ message: "Wrong Method" });
   }
@@ -37,4 +37,4 @@ const postNewComment = async (req: NextApiRequest, res: NextApiResponse) => {
  
 };
 
-export default postNewComment;
+export default PostNewComment;

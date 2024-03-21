@@ -3,7 +3,7 @@ import prisma from "../../../prisma";
 import { json } from "stream/consumers";
  
 
-const UpdateSelecteddata = async (req: NextApiRequest, res: NextApiResponse) => {
+const UpdateSelectedAccident = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
     return res.status(400).json({ message: "Wrong Method" });
   }
@@ -42,7 +42,7 @@ const UpdateSelecteddata = async (req: NextApiRequest, res: NextApiResponse) => 
       assignedToCompany: data.assignedToCompany,
     },
   })
-    return res.status(200).json({message: "Accident Updateed Successfuly!"});
+    return res.status(200).json({message: "Accident Updated Successfuly!"});
 
  }
  catch(err) {
@@ -53,4 +53,4 @@ const UpdateSelecteddata = async (req: NextApiRequest, res: NextApiResponse) => 
  
 };
 
-export default UpdateSelecteddata;
+export default UpdateSelectedAccident;
