@@ -10,9 +10,7 @@ const UpdateUserStatus = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const data = req.body;
 
-  console.log(data.status)
-
-  if (!data || !data.id  ) return res.status(400).json({message: "Data Is Missing!"})
+  if (!data || !data.id) return res.status(400).json({message: "Data Is Missing!"})
 
  try{
   await prisma.users.update({

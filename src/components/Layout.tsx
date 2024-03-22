@@ -19,7 +19,7 @@ const Layout = ({ children }: PropsType) => {
   useEffect(() => {
     if (!fetched && !loading) dispatch(fetchAccidents());
     if (!fetchedUser && !loadingUser) dispatch(fetchUsers());
-  }, [fetched, loading]);
+  }, [fetched, loading, fetchedUser, loadingUser]);
 
   return (
     <div className="flex ">

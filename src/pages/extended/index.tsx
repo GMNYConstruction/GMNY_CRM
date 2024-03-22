@@ -103,7 +103,7 @@ const Extended = () => {
     }, 5000);
   };
 
-  const deleteComment = async (id: number, caseindex: number) => {
+  const deleteComment = async (id: number) => {
     const res = await getApiResponse({ apiRoute: "/api/deleteComment", body: { id: id, userid: user.id } });
 
     if (res.message === "Comment deleted!" && accidentSelected && accidentSelected.comments) {
@@ -180,11 +180,11 @@ const Extended = () => {
                 <div className="flex items-center">
                   <h1 className="w-[30%]">Date of accident:</h1>
                   <CalendarDrawer
-                    properties="w-[70%]"
+                    properties={`w-[70%] ${readOnly && "pointer-events-none"}`}
                     value={accident.dateOfAccident}
                     change="dateOfAccident"
                     data={accident}
-                    setData={readOnly ? () => {} : setAccident}
+                    setData={setAccident}
                   />
                 </div>
 
@@ -223,33 +223,33 @@ const Extended = () => {
                 <div className="flex items-center">
                   <h1 className="w-[30%]">First check: </h1>
                   <CalendarDrawer
-                    properties="w-[70%]"
+                    properties={`w-[70%] ${readOnly && "pointer-events-none"}`}
                     value={accident.firstCheck}
                     change="firstCheck"
                     data={accident}
-                    setData={readOnly ? () => {} : setAccident}
+                    setData={setAccident}
                   />
                 </div>
 
                 <div className="flex items-center">
                   <h1 className="w-[30%]">Last check: </h1>
                   <CalendarDrawer
-                    properties="w-[70%]"
+                    properties={`w-[70%] ${readOnly && "pointer-events-none"}`}
                     value={accident.lastCheck}
                     change="lastCheck"
                     data={accident}
-                    setData={readOnly ? () => {} : setAccident}
+                    setData={setAccident}
                   />
                 </div>
 
                 <div className="flex items-center">
                   <h1 className="w-[30%]">Last day worked: </h1>
                   <CalendarDrawer
-                    properties="w-[70%]"
+                    properties={`w-[70%] ${readOnly && "pointer-events-none"}`}
                     value={accident.lastDayOfWork}
                     change="lastDayOfWork"
                     data={accident}
-                    setData={readOnly ? () => {} : setAccident}
+                    setData={setAccident}
                   />
                 </div>
 
@@ -355,7 +355,7 @@ const Extended = () => {
             <Button text="Post comment" btype="submit" properties={`bg-primaryred text-white`} />
           </div>
 
-          {accidentSelected?.comments?.map((comment, index) => {
+          {accidentSelected?.comments?.map((comment) => {
             return (
               <div key={comment.id} className="rounded-md p-2 flex flex-col gap-1 relative">
                 <h1 className="w-[95%] border-b border-neutral-500">{comment.comment}</h1>
@@ -365,7 +365,7 @@ const Extended = () => {
                 {comment.userid === user.id && (
                   <button
                     type="button"
-                    onClick={() => deleteComment(comment.id, index)}
+                    onClick={() => deleteComment(comment.id)}
                     className="absolute right-[2%] top-[25%]"
                   >
                     <Image className="h-[25px] w-[25px]" alt="delete" src={bin} />

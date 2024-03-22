@@ -10,7 +10,7 @@ export default withAuth(
     const user = await getToken({req: req});
   
     if (req.nextUrl.pathname.startsWith('/admin') && user?.accessLvl !== "admin") {
-       return NextResponse.redirect(new URL("/testpage", req.url));
+       return NextResponse.redirect(new URL("/caselist", req.url));
     } 
      
     

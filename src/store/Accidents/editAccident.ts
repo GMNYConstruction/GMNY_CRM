@@ -1,9 +1,7 @@
 import { Accidents, CommentType, UsersType } from "@/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-// this is how to call api:
-// dispatch(editAccident({id: acciden.id}));
 
-export const editAccident = createAsyncThunk("edit accidents", async (payload: Accidents, thunk) =>{
+export const editAccident = createAsyncThunk("edit accident", async (payload: Accidents, thunk) =>{
     const {  
         id,
         name,

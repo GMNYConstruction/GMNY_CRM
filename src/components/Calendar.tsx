@@ -18,17 +18,15 @@ const CalendarDrawer: FC<Iprops> = ({ value, change, data, setData, properties }
   };
 
   return (
-    <div className={`relative w-[70%] `}>
-      <DateTime
-        input={true}
-        dateFormat={"MM/DD/YYYY"}
-        timeFormat={false}
-        value={value}
-        closeOnSelect={true}
-        onChange={(date) => handleChange(date)}
-        className={`w-full h-10 pl-4 py-2.5 bg-white rounded-lg shadow border border-neutral-200 grow shrink basis-0 text-neutral-400 text-sm font-normal  leading-tight flex items-center   `}
-      />
-    </div>
+    <DateTime
+      input={true}
+      dateFormat={"MM/DD/YYYY"}
+      timeFormat={false}
+      value={value}
+      closeOnSelect={true}
+      onChange={(date) => handleChange(date)}
+      className={`h-9 pl-4 py-2.5 bg-white rounded-lg shadow border border-neutral-200 text-neutral-400 text-sm font-normal flex items-center ${properties}`}
+    />
   );
 };
 

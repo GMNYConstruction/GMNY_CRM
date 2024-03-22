@@ -2,7 +2,7 @@ import { UsersType } from "@/types";
 import { createAsyncThunk } from "@reduxjs/toolkit";
  
 
-export const editUser = createAsyncThunk("edit accidents", async (payload: UsersType, thunk) =>{
+export const editUser = createAsyncThunk("edit user", async (payload: UsersType, thunk) =>{
     const {  
         id,
         name,

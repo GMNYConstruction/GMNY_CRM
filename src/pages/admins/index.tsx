@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 import { AdminCreate, UsersType } from "@/types";
 import { getApiResponse } from "@/utils/getApiResponse";
 import AdminCard from "@/components/AdminCard";
-import { stat } from "fs";
 import Select from "@/components/Select";
 
 const Admins = () => {
