@@ -13,6 +13,7 @@ const Admins = () => {
   const [admin, setAdmin] = useState({} as AdminCreate);
   const [response, setResponse] = useState("");
   const [errors, setErrors] = useState({} as AdminCreate);
+  const [search, setSearch] = useState("");
 
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     setAdmin((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -20,6 +21,17 @@ const Admins = () => {
 
   const errorHandler = (id: string, value: string) => {
     setErrors((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const filterList = () => {
+    return users?.filter((e: UsersType) => {
+      if (
+        e.name?.toLowerCase().includes(search.toLowerCase()) ||
+        e.email?.toLowerCase().includes(search.toLowerCase()) ||
+        e.accessLvl?.toLowerCase().includes(search.toLowerCase())
+      )
+        return e;
+    });
   };
 
   const formHandler = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -204,7 +216,16 @@ const Admins = () => {
           <Button text="Submit" btype="submit" properties="bg-primaryred text-white" />
         </form>
         <div className="flex flex-col mt-6 gap-4">
-          {users?.map((user: UsersType) => {
+          <div className="flex w-full justify-end">
+            <Input
+              id="search"
+              type="text"
+              placeholder="search"
+              value={search}
+              inputHandler={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          {filterList()?.map((user: UsersType) => {
             return <AdminCard key={user.id} user={user} />;
           })}
         </div>

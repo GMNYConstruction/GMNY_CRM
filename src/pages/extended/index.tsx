@@ -88,7 +88,7 @@ const Extended = () => {
       dispatch(
         editAccident({
           ...accidentSelected,
-          comments: [...accidentSelected.comments, { ...comment, id: result.id } as CommentType],
+          comments: [{ ...comment, id: result.id } as CommentType, ...accidentSelected.comments],
         })
       );
 
@@ -338,6 +338,7 @@ const Extended = () => {
           </div>
         </div>
       </form>
+
       <form onSubmit={formCommentHandler} className="w-[90%] flex flex-col gap-2 ">
         <h1 className="w-[35%]">Comments: </h1>
         <div className="flex flex-col gap-3 ">
