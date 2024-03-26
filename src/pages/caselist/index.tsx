@@ -52,8 +52,6 @@ const Page = () => {
       );
   };
 
-  console.log(accidents);
-
   return (
     <div className="w-full flex justify-center">
       <div className="w-[80%] relative py-4 px-2 flex flex-col gap-4">

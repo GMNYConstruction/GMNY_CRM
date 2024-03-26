@@ -108,6 +108,8 @@ const Extended = () => {
         })
       );
 
+      setAccident((prev) => ({ ...prev, comments: accidentSelected.comments }));
+
       setComment((prev) => ({
         ...prev,
         comment: "",
@@ -130,8 +132,6 @@ const Extended = () => {
         })
       );
     }
-
-    accidentSelected && setAccident((prev) => ({ ...prev, comments: accidentSelected.comments }));
   };
 
   return (
