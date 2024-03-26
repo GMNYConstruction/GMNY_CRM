@@ -84,6 +84,7 @@ const Extended = () => {
         editAccident({
           ...accidentSelected,
           ...accident,
+          comments: accidentSelected.comments,
         })
       );
     }
@@ -107,8 +108,6 @@ const Extended = () => {
           comments: [{ ...comment, id: result.id } as CommentType, ...accidentSelected.comments],
         })
       );
-
-      setAccident((prev) => ({ ...prev, comments: accidentSelected.comments }));
 
       setComment((prev) => ({
         ...prev,
