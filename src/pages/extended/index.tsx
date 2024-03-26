@@ -78,11 +78,8 @@ const Extended = () => {
     const result = await getApiResponse({ apiRoute: "/api/updateSelectedAccident", body: accident });
 
     setResponse(result.message);
-    console.log(result);
 
     if (accidentSelected && result.message === "Accident Updated Successfuly!") {
-      console.log(accidentSelected);
-      console.log(accident);
       dispatch(
         editAccident({
           ...accidentSelected,
@@ -132,6 +129,7 @@ const Extended = () => {
           comments: accidentSelected.comments.filter((item) => item.id !== id),
         })
       );
+      setAccident((prev) => ({ ...prev, comments: accidentSelected.comments }));
     }
   };
 
