@@ -109,7 +109,7 @@ const Page = () => {
                 />
               </div>
               <div className="grid grid-cols-[2fr,4fr] items-center">
-                <h1>Company We Worked For:</h1>
+                <h1>Date Of Accident:</h1>
                 <CalendarDrawer
                   setData={setAccident}
                   value={accident.dateOfAccident}
