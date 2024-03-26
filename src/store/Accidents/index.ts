@@ -51,8 +51,7 @@ export const allAccidents = createSlice({
         state.loading = true;
       });
        builder.addCase(setNewAccident.fulfilled, (state, action) => {
-       state.accidents.unshift(action.payload) ;
-
+        state.accidents.unshift(action.payload);
         state.fetched = true;
         state.loading = false;
         state.error = false;

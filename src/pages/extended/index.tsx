@@ -240,34 +240,37 @@ const Extended = () => {
               <div className="rounded-md p-3 w-[50%] flex flex-col gap-2">
                 <div className="flex items-center">
                   <h1 className="w-[30%]">First check: </h1>
-                  <CalendarDrawer
-                    properties={`w-[70%] ${readOnly && "pointer-events-none"}`}
+                  <Input
+                    properties={`w-[70%]`}
                     value={accident.firstCheck}
-                    change="firstCheck"
-                    data={accident}
-                    setData={setAccident}
+                    inputHandler={handleChange}
+                    id="firstCheck"
+                    placeholder="First check"
+                    readonly={readOnly}
                   />
                 </div>
 
                 <div className="flex items-center">
                   <h1 className="w-[30%]">Last check: </h1>
-                  <CalendarDrawer
-                    properties={`w-[70%] ${readOnly && "pointer-events-none"}`}
+                  <Input
+                    properties={`w-[70%]`}
                     value={accident.lastCheck}
-                    change="lastCheck"
-                    data={accident}
-                    setData={setAccident}
+                    inputHandler={handleChange}
+                    id="lastCheck"
+                    placeholder="Last Check"
+                    readonly={readOnly}
                   />
                 </div>
 
                 <div className="flex items-center">
                   <h1 className="w-[30%]">Last day worked: </h1>
-                  <CalendarDrawer
-                    properties={`w-[70%] ${readOnly && "pointer-events-none"}`}
+                  <Input
+                    properties={`w-[70%]`}
                     value={accident.lastDayOfWork}
-                    change="lastDayOfWork"
-                    data={accident}
-                    setData={setAccident}
+                    inputHandler={handleChange}
+                    id="lastDayOfWork"
+                    placeholder="Last day of work"
+                    readonly={readOnly}
                   />
                 </div>
 
@@ -365,7 +368,7 @@ const Extended = () => {
               {commentResponse}
             </h1>
             <TextArea
-              properties={`w-full h-[50px] min-h-[50px] max-h-[150px]`}
+              properties={`w-full min-h-[80px] max-h-[150px]`}
               placeholder="Enter your comment"
               value={comment?.comment}
               id="comment"
@@ -377,7 +380,9 @@ const Extended = () => {
           {accidentSelected?.comments?.map((comment) => {
             return (
               <div key={comment.id} className="rounded-md p-2 flex flex-col gap-1 relative">
-                <h1 className={`w-[95%] border-b border-neutral-500 ${hide && "w-full"}`}>{comment.comment}</h1>
+                <h1 className={`w-[95%] resize-none border-b border-neutral-500 text-wrap ${hide && "w-full"}`}>
+                  {comment.comment}
+                </h1>
                 <span>
                   {comment.user?.name} {comment.dateCreated}
                 </span>

@@ -7,8 +7,12 @@ import { AdminCreate, UsersType } from "@/types";
 import { getApiResponse } from "@/utils/getApiResponse";
 import AdminCard from "@/components/AdminCard";
 import Select from "@/components/Select";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/store/store";
+import { setNewUser } from "@/store/Users/setNewUser";
 
 const Admins = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const { users } = useSelector(getUsers);
   const [admin, setAdmin] = useState({} as AdminCreate);
   const [response, setResponse] = useState("");
@@ -76,7 +80,7 @@ const Admins = () => {
       errors++;
     }
 
-    if (!admin.status) {
+    if (!`${admin.status}`) {
       errorHandler("status", "Please select status");
       errors++;
     }
@@ -87,7 +91,13 @@ const Admins = () => {
 
     setResponse(result.message);
 
-    result.message === "User Created!" &&
+    if (result.message === "User Created!") {
+      dispatch(
+        setNewUser({
+          newUser: result.admin,
+        })
+      );
+
       setAdmin({
         name: "",
         email: "",
@@ -96,6 +106,7 @@ const Admins = () => {
         accessLvl: "",
         status: null,
       });
+    }
 
     setTimeout(() => {
       setResponse("");
@@ -194,12 +205,11 @@ const Admins = () => {
             </div>
           </div>
           <div className="flex flex-col w-full relative">
-            <p className="text-red-500">{errors.name}</p>
+            <p className="text-red-500">{errors.status}</p>
             <div className="w-full relative flex items-center">
               <label className="w-[10%]" htmlFor="accessLvl">
                 Status:
               </label>
-
               <Select
                 id="status"
                 options={["Active", "Disabled"]}
@@ -210,6 +220,7 @@ const Admins = () => {
                 inputHandler={(e) =>
                   setAdmin((prev) => ({ ...prev, status: e.target.value.toLowerCase() === "active" ? true : false }))
                 }
+                value={admin.status ? "Active" : "Disabled"}
               />
             </div>
           </div>

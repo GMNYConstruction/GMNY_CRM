@@ -14,6 +14,7 @@
 
 .form-control {
   width: 95%;
+  color: black;
 }
 
 .form-control:focus {

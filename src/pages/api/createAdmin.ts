@@ -14,7 +14,7 @@ const CreateAdmin = async (req: NextApiRequest, res: NextApiResponse) => {
  const hashedPassword = await hash(data.password, 10);
 
  try{
-   await prisma.users.create({
+   const result = await prisma.users.create({
         data: {
             name: data.name,
             email: data.email,
@@ -22,13 +22,14 @@ const CreateAdmin = async (req: NextApiRequest, res: NextApiResponse) => {
             accessLvl: data.accessLvl
         }
     })
+     return res.status(201).json({message: "User Created!", admin: result })
  }
  catch(err) {
     return res.status(400).json({message: "Error occured", error: err})
    
  }
 
- return res.status(201).json({message: "User Created!"})
+
 
 };
 
