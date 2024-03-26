@@ -5,7 +5,7 @@ import { AccidentCardInterface } from "@/types";
 const AccidentCard: FC<AccidentCardInterface> = ({ data }) => {
   return (
     <div className="flex flex-col gap-3" key={data.id}>
-      <div className="relative w-full h-[200  px] border border-red-500 rounded-md p-2 flex">
+      <div className="relative w-full h-[170px] border border-neutral-500 rounded-md p-2 flex 2">
         <div className="w-[10%]">
           <h1>id:</h1>
           <h2>{data.id}</h2>

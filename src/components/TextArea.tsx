@@ -10,7 +10,6 @@ interface IProps {
 }
 
 export const TextArea: FC<IProps> = ({ readOnly = false, placeholder, id, properties, value, inputHandler }) => {
-  const active = "text-red-500 text-sm font-medium  leading-tight border-b-2 border-red-500";
   return (
     <textarea
       className={`${properties} w-full min-h-[200px] max-h-[300px] px-4 py-3 bg-white rounded-lg shadow border border-neutral-200 flex-col `}

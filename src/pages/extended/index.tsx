@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useGetAccidentById } from "@/hooks/useGetAccidentById";
 import { useDispatch } from "react-redux";
@@ -12,10 +12,12 @@ import { TextArea } from "@/components/TextArea";
 import { Button } from "@/components/Button";
 import { getApiResponse } from "@/utils/getApiResponse";
 import Image from "next/image";
+import { useReactToPrint } from "react-to-print";
 
 const Extended = () => {
   const today = new Date().toLocaleDateString("en-US");
   const { data: session } = useSession();
+  const [hide, setHide] = useState(false);
   const user = session?.user as AuthUser;
   const accidentSelected = useGetAccidentById();
   const dispatch = useDispatch<AppDispatch>();
@@ -24,6 +26,20 @@ const Extended = () => {
   const [commentResponse, setCommentResponse] = useState("");
   const [comment, setComment] = useState<CommentType>({} as CommentType);
   const [accident, setAccident] = useState<Accidents>({} as Accidents);
+  const componentRef = useRef<any>();
+
+  const handlePrint = useReactToPrint({
+    onBeforeGetContent: async () => setHide(true),
+    content: () => componentRef.current,
+    documentTitle: accidentSelected?.name,
+    onAfterPrint: () => setHide(false),
+    onPrintError: () => setHide(false),
+  });
+
+  const handleEditButton = () => {
+    setReadOnly(!readOnly);
+    !readOnly && accidentSelected && setAccident(accidentSelected);
+  };
 
   useEffect(() => {
     accidentSelected && setAccident(accidentSelected);
@@ -62,8 +78,11 @@ const Extended = () => {
     const result = await getApiResponse({ apiRoute: "/api/updateSelectedAccident", body: accident });
 
     setResponse(result.message);
+    console.log(result);
 
-    if (accidentSelected && accidentSelected.comments && result.message === "Accident Updated Successfuly!") {
+    if (accidentSelected && result.message === "Accident Updated Successfuly!") {
+      console.log(accidentSelected);
+      console.log(accident);
       dispatch(
         editAccident({
           ...accidentSelected,
@@ -81,7 +100,7 @@ const Extended = () => {
   const formCommentHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const result = await getApiResponse({ apiRoute: "/api/postNewComment", body: comment });
+    const result = await getApiResponse({ apiRoute: "/api/createNewComment", body: comment });
     setCommentResponse(result.message);
 
     if (accidentSelected && accidentSelected.comments && result.message === "Comment posted successfuly!") {
@@ -117,18 +136,19 @@ const Extended = () => {
   };
 
   return (
-    <div className="flex flex-col w-full justify-center items-center ">
+    <div className="flex flex-col w-full justify-center items-center" ref={componentRef}>
       <form onSubmit={formHandler} className="flex flex-col  w-[90%] justify-center">
-        <div className="flex w-full justify-between gap-4 px-2">
+        <div className={`flex w-full justify-between gap-4 px-2 ${hide && "hidden"}`}>
           <h1 className={`${response === "Accident Updated Successfuly!" ? "text-green-600" : "text-red-500"}`}>
             {response}
           </h1>
           <div className="flex gap-4">
             {!readOnly && <Button text="Save" btype="submit" />}
+            <Button btype="button" text="Save PDF" onClick={handlePrint} properties={`${!readOnly && "hidden"}`} />
             <Button
               text={`${readOnly ? "Edit" : "Cancel"}`}
               btype="button"
-              onClick={() => setReadOnly(!readOnly)}
+              onClick={handleEditButton}
               properties="text-white bg-primaryred"
             />
           </div>
@@ -254,7 +274,7 @@ const Extended = () => {
                 </div>
 
                 <div className="flex items-center">
-                  <h1 className="w-[30%]">Repost:</h1>
+                  <h1 className="w-[30%]">Report:</h1>
                   <Input
                     properties={`w-[70%]`}
                     value={accident.report}
@@ -339,10 +359,10 @@ const Extended = () => {
         </div>
       </form>
 
-      <form onSubmit={formCommentHandler} className="w-[90%] flex flex-col gap-2 ">
+      <form onSubmit={formCommentHandler} className={`w-[90%] flex flex-col gap-2 `}>
         <h1 className="w-[35%]">Comments: </h1>
-        <div className="flex flex-col gap-3 ">
-          <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
+          <div className={`flex flex-col gap-2 ${hide && "hidden"}`}>
             <h1 className={`${commentResponse === "Comment posted successfuly!" ? "text-green-600" : "text-red-500"}`}>
               {commentResponse}
             </h1>
@@ -359,7 +379,7 @@ const Extended = () => {
           {accidentSelected?.comments?.map((comment) => {
             return (
               <div key={comment.id} className="rounded-md p-2 flex flex-col gap-1 relative">
-                <h1 className="w-[95%] border-b border-neutral-500">{comment.comment}</h1>
+                <h1 className={`w-[95%] border-b border-neutral-500 ${hide && "w-full"}`}>{comment.comment}</h1>
                 <span>
                   {comment.user?.name} {comment.dateCreated}
                 </span>
@@ -367,7 +387,7 @@ const Extended = () => {
                   <button
                     type="button"
                     onClick={() => deleteComment(comment.id)}
-                    className="absolute right-[2%] top-[25%]"
+                    className={`absolute right-[2%] top-[25%] ${hide && "hidden"}`}
                   >
                     <Image className="h-[25px] w-[25px]" alt="delete" src={bin} />
                   </button>

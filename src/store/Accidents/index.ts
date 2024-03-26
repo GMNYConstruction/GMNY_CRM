@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { fetchAccidents } from './fetch';
 import { editAccident } from './editAccident';
 import { Accidents } from '@/types';
+import { setNewAccident } from './setNewAccident';
 
 const initialState = {
   accidents: [] as any,
@@ -45,6 +46,23 @@ export const allAccidents = createSlice({
         state.error = true;
       });
       builder.addCase(editAccident.pending, (state, action) => {
+        state.fetched = false;
+        state.error = false;
+        state.loading = true;
+      });
+       builder.addCase(setNewAccident.fulfilled, (state, action) => {
+       state.accidents.unshift(action.payload) ;
+
+        state.fetched = true;
+        state.loading = false;
+        state.error = false;
+      });
+      builder.addCase(setNewAccident.rejected, (state, action) => {
+        state.fetched = true;
+        state.loading = false;
+        state.error = true;
+      });
+      builder.addCase(setNewAccident.pending, (state, action) => {
         state.fetched = false;
         state.error = false;
         state.loading = true;

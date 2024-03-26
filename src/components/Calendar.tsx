@@ -19,7 +19,6 @@ const CalendarDrawer: FC<Iprops> = ({ value, change, data, setData, properties }
 
   return (
     <DateTime
-      input={true}
       dateFormat={"MM/DD/YYYY"}
       timeFormat={false}
       value={value}
