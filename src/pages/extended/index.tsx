@@ -129,8 +129,9 @@ const Extended = () => {
           comments: accidentSelected.comments.filter((item) => item.id !== id),
         })
       );
-      setAccident((prev) => ({ ...prev, comments: accidentSelected.comments }));
     }
+
+    accidentSelected && setAccident(accidentSelected);
   };
 
   return (
