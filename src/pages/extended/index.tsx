@@ -131,7 +131,7 @@ const Extended = () => {
       );
     }
 
-    accidentSelected && setAccident(accidentSelected);
+    accidentSelected && setAccident((prev) => ({ ...prev, comments: accidentSelected.comments }));
   };
 
   return (
