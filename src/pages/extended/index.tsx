@@ -351,6 +351,7 @@ const Extended = () => {
                     inputHandler={handleChange}
                     id="correspondence"
                     readOnly={readOnly}
+                    resize={hide}
                   />
                 </div>
                 <div className="w-[50%] ">
@@ -361,6 +362,7 @@ const Extended = () => {
                     inputHandler={handleChange}
                     id="notice"
                     readOnly={readOnly}
+                    resize={hide}
                   />
                 </div>
               </div>
