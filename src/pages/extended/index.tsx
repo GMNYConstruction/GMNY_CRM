@@ -157,18 +157,19 @@ const Extended = () => {
               />
             </div>
           </div>
+
           <div className="w-full relative pb-2">
             <div className="relative w-full flex flex-col">
-              <div className="w-full h-[40vh] py-4 px-2 rounded-md flex gap-2 ">
-                <div className="rounded-md p-3 w-[50%] flex flex-col gap-2">
+              <div className={`w-full py-4 px-2 rounded-md flex gap-2 flex-col h-auto`}>
+                <div className={`rounded-md p-3 w-full flex flex-col gap-2`}>
                   <div className="flex items-center">
-                    <h1 className="w-[30%]">ID:</h1>
+                    <h1 className="w-[20%]">ID:</h1>
                     <h1 className="w-[70%]">{accident.id}</h1>
                   </div>
                   <div className="flex items-center">
-                    <h1 className="w-[30%]">Name:</h1>
+                    <h1 className="w-[20%]">Name:</h1>
                     <Input
-                      properties={`w-[70%]`}
+                      properties={`w-[80%]`}
                       value={accident.name}
                       inputHandler={handleChange}
                       id="name"
@@ -178,9 +179,9 @@ const Extended = () => {
                   </div>
 
                   <div className="flex items-center">
-                    <h1 className="w-[30%]">Assigned to:</h1>
+                    <h1 className="w-[20%]">Assigned to:</h1>
                     <Input
-                      properties={`w-[70%]`}
+                      properties={`w-[80%]`}
                       value={accident.assignedToCompany}
                       inputHandler={handleChange}
                       id="assignedToCompany"
@@ -190,9 +191,9 @@ const Extended = () => {
                   </div>
 
                   <div className="flex items-center">
-                    <h1 className="w-[30%]">Comapny We Worked For:</h1>
+                    <h1 className="w-[20%]">Comapny We Worked For:</h1>
                     <Input
-                      properties={`w-[70%]`}
+                      properties={`w-[80%]`}
                       value={accident.companyWeWorkedFor}
                       inputHandler={handleChange}
                       id="companyWeWorkedFor"
@@ -202,7 +203,7 @@ const Extended = () => {
                   </div>
 
                   <div className="flex items-center">
-                    <h1 className="w-[30%]">Date of accident:</h1>
+                    <h1 className="w-[20%]">Date of accident:</h1>
                     <CalendarDrawer
                       properties={`w-[70%] ${readOnly && "pointer-events-none"}`}
                       value={accident.dateOfAccident}
@@ -213,9 +214,9 @@ const Extended = () => {
                   </div>
 
                   <div className="flex items-center">
-                    <h1 className="w-[30%]">Accident location:</h1>
+                    <h1 className="w-[20%]">Accident location:</h1>
                     <Input
-                      properties={`w-[70%]`}
+                      properties={`w-[80%]`}
                       value={accident.accidentLocation}
                       inputHandler={handleChange}
                       id="accidentLocation"
@@ -225,14 +226,14 @@ const Extended = () => {
                   </div>
 
                   <div className="flex items-center">
-                    <h1 className="w-[30%]">
+                    <h1 className="w-[20%]">
                       <a href={accident.documentFolder} target="_blank">
                         Document Folder
                       </a>
                     </h1>
                     {!readOnly && (
                       <Input
-                        properties={`w-[70%]`}
+                        properties={`w-[80%]`}
                         value={accident.documentFolder}
                         inputHandler={handleChange}
                         id="documentFolder"
@@ -243,11 +244,11 @@ const Extended = () => {
                   </div>
                 </div>
 
-                <div className="rounded-md p-3 w-[50%] flex flex-col gap-2">
+                <div className={`rounded-md p-3 w-full flex flex-col gap-2 `}>
                   <div className="flex items-center">
-                    <h1 className="w-[30%]">First check: </h1>
+                    <h1 className="w-[20%]">First check: </h1>
                     <Input
-                      properties={`w-[70%]`}
+                      properties={`w-[80%]`}
                       value={accident.firstCheck}
                       inputHandler={handleChange}
                       id="firstCheck"
@@ -257,9 +258,9 @@ const Extended = () => {
                   </div>
 
                   <div className="flex items-center">
-                    <h1 className="w-[30%]">Last check: </h1>
+                    <h1 className="w-[20%]">Last check: </h1>
                     <Input
-                      properties={`w-[70%]`}
+                      properties={`w-[80%]`}
                       value={accident.lastCheck}
                       inputHandler={handleChange}
                       id="lastCheck"
@@ -269,9 +270,9 @@ const Extended = () => {
                   </div>
 
                   <div className="flex items-center">
-                    <h1 className="w-[30%]">Last day worked: </h1>
+                    <h1 className="w-[20%]">Last day worked: </h1>
                     <Input
-                      properties={`w-[70%]`}
+                      properties={`w-[80%]`}
                       value={accident.lastDayOfWork}
                       inputHandler={handleChange}
                       id="lastDayOfWork"
@@ -281,9 +282,9 @@ const Extended = () => {
                   </div>
 
                   <div className="flex items-center">
-                    <h1 className="w-[30%]">Report:</h1>
+                    <h1 className="w-[20%]">Report:</h1>
                     <Input
-                      properties={`w-[70%]`}
+                      properties={`w-[80%]`}
                       value={accident.report}
                       inputHandler={handleChange}
                       id="report"
@@ -293,9 +294,9 @@ const Extended = () => {
                   </div>
 
                   <div className="flex items-center">
-                    <h1 className="w-[30%]">eFroi:</h1>
+                    <h1 className="w-[20%]">eFroi:</h1>
                     <Input
-                      properties={`w-[70%]`}
+                      properties={`w-[80%]`}
                       value={accident.efroi}
                       inputHandler={handleChange}
                       id="efroi"
@@ -305,9 +306,9 @@ const Extended = () => {
                   </div>
 
                   <div className="flex items-center">
-                    <h1 className="w-[30%]">Back To Work:</h1>
+                    <h1 className="w-[20%]">Back To Work:</h1>
                     <Input
-                      properties={`w-[70%]`}
+                      properties={`w-[80%]`}
                       value={accident.backToWork}
                       inputHandler={handleChange}
                       id="backToWork"
@@ -319,7 +320,7 @@ const Extended = () => {
               </div>
 
               <div className="w-full min-h-[30%] max-h-[45%] py-4 px-2 flex gap-2">
-                <div className="relative  w-[50%]">
+                <div className="relative w-[50%]">
                   <h1>Accident description:</h1>
                   <TextArea
                     placeholder="Accident description"
@@ -343,7 +344,7 @@ const Extended = () => {
                 </div>
               </div>
               <div className="w-full min-h-[30%] max-h-[45%] py-4 px-2 flex gap-2">
-                <div className="relative  w-[50%]">
+                <div className="relative w-[50%]">
                   <h1>Correspondence with NYSIF, Insurance, Lawyers:</h1>
                   <TextArea
                     placeholder="Correspondence with NYSIF, Insurance, Lawyers."
@@ -402,7 +403,7 @@ const Extended = () => {
                     <button
                       type="button"
                       onClick={() => deleteComment(comment.id)}
-                      className={`absolute right-[2%] top-[25%] ${hide && "hidden"}`}
+                      className={`absolute right-[2%] top-[10%] ${hide && "hidden"}`}
                     >
                       <Image className="h-[25px] w-[25px]" alt="delete" src={bin} />
                     </button>

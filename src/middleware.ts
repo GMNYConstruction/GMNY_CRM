@@ -2,7 +2,6 @@ import { getToken } from "next-auth/jwt";
 import { withAuth } from "next-auth/middleware"
 import type { NextRequest } from 'next/server'
 import { NextResponse } from "next/server";
- 
 
 
 export default withAuth(
@@ -13,8 +12,6 @@ export default withAuth(
        return NextResponse.redirect(new URL("/caselist", req.url));
     } 
      
-    
-    
   },
   {
     callbacks: {
