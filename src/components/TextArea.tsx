@@ -23,7 +23,6 @@ export const TextArea: FC<IProps> = ({
 
   if (resize && ref.current) {
     ref.current.style.width = "720px";
-    console.log(ref.current.style.width);
     ref.current.style.height = ref.current.scrollHeight + "px";
     ref.current.style.maxHeight = ref.current.scrollHeight + "px";
   } else if (ref.current && !resize) {
