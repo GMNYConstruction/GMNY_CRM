@@ -160,7 +160,7 @@ const Extended = () => {
 
           <div className="w-full relative pb-2">
             <div className="relative w-full flex flex-col">
-              <div className={`w-full py-4 px-2 rounded-md flex gap-2 flex-col h-auto`}>
+              <div className={`w-full py-4 px-2 rounded-md flex gap-2 h-auto ${hide && "flex-col"}`}>
                 <div className={`rounded-md p-3 w-full flex flex-col gap-2`}>
                   <div className="flex items-center">
                     <h1 className="w-[20%]">ID:</h1>
@@ -319,8 +319,8 @@ const Extended = () => {
                 </div>
               </div>
 
-              <div className="w-full min-h-[30%] max-h-[45%] py-4 px-2 flex gap-2">
-                <div className="relative w-[50%]">
+              <div className="w-full min-h-[30%] max-h-[45%] py-4 px-2 flex flex-col gap-2">
+                <div className="w-[100%]">
                   <h1>Accident description:</h1>
                   <TextArea
                     placeholder="Accident description"
@@ -331,7 +331,7 @@ const Extended = () => {
                     resize={hide}
                   />
                 </div>
-                <div className="w-[50%] ">
+                <div className="w-[100%] ">
                   <h1>Witness:</h1>
                   <TextArea
                     placeholder="Accident witness"
@@ -343,8 +343,8 @@ const Extended = () => {
                   />
                 </div>
               </div>
-              <div className="w-full min-h-[30%] max-h-[45%] py-4 px-2 flex gap-2">
-                <div className="relative w-[50%]">
+              <div className="w-full min-h-[30%] max-h-[45%] py-4 px-2 flex flex-col gap-2">
+                <div className="relative w-[100%]">
                   <h1>Correspondence with NYSIF, Insurance, Lawyers:</h1>
                   <TextArea
                     placeholder="Correspondence with NYSIF, Insurance, Lawyers."
@@ -355,7 +355,7 @@ const Extended = () => {
                     resize={hide}
                   />
                 </div>
-                <div className="w-[50%] ">
+                <div className="w-[100%] ">
                   <h1>Notice:</h1>
                   <TextArea
                     placeholder="Notice"

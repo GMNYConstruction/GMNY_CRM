@@ -3,7 +3,7 @@ import React, { FC, useRef } from "react";
 interface IProps {
   placeholder: string;
   id: string;
-  properties?: string | undefined;
+  properties?: string;
   value: string | undefined;
   inputHandler: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   readOnly?: boolean;
@@ -22,7 +22,8 @@ export const TextArea: FC<IProps> = ({
   const ref = useRef<HTMLTextAreaElement>(null);
 
   if (resize && ref.current) {
-    ref.current.style.width = "360px";
+    ref.current.style.width = "720px";
+    console.log(ref.current.style.width);
     ref.current.style.height = ref.current.scrollHeight + "px";
     ref.current.style.maxHeight = ref.current.scrollHeight + "px";
   } else if (ref.current && !resize) {
