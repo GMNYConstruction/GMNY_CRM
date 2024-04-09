@@ -18,6 +18,7 @@ const Page = () => {
   const [search, setSearch] = useState("");
   const [accident, setAccident] = useState<Accidents>({} as Accidents);
   const [createNewAccident, setCreateNewAccident] = useState(false);
+  const [response, setResponse] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     setAccident((prev) => ({
@@ -43,12 +44,29 @@ const Page = () => {
 
     const result = await getApiResponse({ apiRoute: "/api/createAccident", body: accident });
 
-    if (result.message === "New Accident Created!")
+    setResponse(result.message);
+
+    if (result.message === "New Accident Created!") {
       dispatch(
         setNewAccident({
           newAccident: result.accident,
         })
       );
+      setAccident({
+        ...accident,
+        name: "",
+        dateOfAccident: "",
+        companyWeWorkedFor: "",
+        assignedToCompany: "",
+        documentFolder: "",
+        accidentDescription: "",
+      });
+      setCreateNewAccident(!createNewAccident);
+    }
+
+    setTimeout(() => {
+      setResponse("");
+    }, 3000);
   };
 
   return (
@@ -65,7 +83,6 @@ const Page = () => {
             {createNewAccident && <Button text="Submit New Accident" btype="submit" form="accidentForm" />}
           </div>
           <div className="flex gap-4 items-center">
-            <h1>Test UI sample</h1>
             <input
               type="text"
               placeholder="search"
@@ -74,6 +91,10 @@ const Page = () => {
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
+        </div>
+
+        <div>
+          <h1 className={`${response === "New Accident Created!" ? "text-green-600" : "text-red-500"}`}>{response}</h1>
         </div>
 
         <form
