@@ -40,6 +40,7 @@ const UpdateSelectedAccident = async (req: NextApiRequest, res: NextApiResponse)
       lastDayOfWork: data.lastDayOfWork,
       companyWeWorkedFor: data.companyWeWorkedFor,
       assignedToCompany: data.assignedToCompany,
+      lastModified: new Date(),
     },
   })
     return res.status(200).json({message: "Accident Updated Successfuly!"});

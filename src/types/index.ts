@@ -33,6 +33,7 @@ export interface Accidents {
   lastDayOfWork: string | undefined;
   companyWeWorkedFor: string | undefined;
   assignedToCompany: string | undefined;
+  lastModified: Date;
   comments?: CommentType[]
 }
 

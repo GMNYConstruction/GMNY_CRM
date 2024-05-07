@@ -10,7 +10,7 @@ const GetAllAccidents = async (req: NextApiRequest, res: NextApiResponse) => {
  try{
     const response = await prisma.accidents.findMany({
       orderBy: {
-        id: "desc",
+        lastModified: "desc",
       },
     });
     return res.json(response);

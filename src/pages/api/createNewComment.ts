@@ -26,6 +26,16 @@ const CreateNewComment = async (req: NextApiRequest, res: NextApiResponse) => {
         },
     });
 
+    await prisma.accidents.update({
+      where: {
+        id: data.caseid,
+      },
+      data: {
+        lastModified: new Date(),
+      }
+      
+    })
+
     return res.status(200).json({message: "Comment posted successfuly!", id: comment.id});
 
  }
