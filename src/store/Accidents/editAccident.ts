@@ -20,6 +20,7 @@ export const editAccident = createAsyncThunk("edit accident", async (payload: Ac
         lastDayOfWork,
         companyWeWorkedFor,
         assignedToCompany,
+        lastModified,
         comments
      } = payload;
     try {
@@ -43,6 +44,7 @@ export const editAccident = createAsyncThunk("edit accident", async (payload: Ac
             lastDayOfWork,
             companyWeWorkedFor,
             assignedToCompany,
+            lastModified,
             comments           
         }
         return editedAccident;
