@@ -26,7 +26,7 @@ const CreateNewComment = async (req: NextApiRequest, res: NextApiResponse) => {
         },
     });
 
-    await prisma.accidents.update({
+    const updateCase = await prisma.accidents.update({
       where: {
         id: data.caseid,
       },
@@ -36,7 +36,7 @@ const CreateNewComment = async (req: NextApiRequest, res: NextApiResponse) => {
       
     })
 
-    return res.status(200).json({message: "Comment posted successfuly!", id: comment.id});
+    return res.status(200).json({message: "Comment posted successfuly!", id: comment.id, case: updateCase});
 
  }
  catch(err) {
