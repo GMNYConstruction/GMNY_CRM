@@ -28,21 +28,19 @@ const Page = () => {
   };
 
   const filterList = () => {
-    return accidents?.filter((e: Accidents) => {
-      if (e.name) {
-        const nameArr = e.name?.toLocaleLowerCase().split(" ");
-        const searchArr = search.toLowerCase().split(" ");
-
-        if (
-          nameArr.some((r) => searchArr.includes(r)) ||
-          e.name?.toLowerCase().includes(search.toLowerCase()) ||
-          e.dateOfAccident?.toString().toLowerCase().includes(search.toLowerCase()) ||
-          e.companyWeWorkedFor?.toLowerCase().includes(search.toLowerCase()) ||
-          e.assignedToCompany?.toLowerCase().includes(search.toLowerCase())
-        )
-          return e;
-      }
+    const searchTerms = search.split(" ");
+    let finalSearch = [...accidents];
+    searchTerms.forEach((term) => {
+      finalSearch = finalSearch.filter((accident) => {
+        return (
+          accident.name?.toLowerCase().includes(term.toLowerCase()) ||
+          accident.dateOfAccident?.toString().toLowerCase().includes(term.toLowerCase()) ||
+          accident.companyWeWorkedFor?.toLowerCase().includes(term.toLowerCase()) ||
+          accident.assignedToCompany?.toLowerCase().includes(term.toLowerCase())
+        );
+      });
     });
+    return finalSearch;
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
