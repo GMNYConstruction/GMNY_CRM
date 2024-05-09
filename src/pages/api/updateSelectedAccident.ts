@@ -10,14 +10,6 @@ const UpdateSelectedAccident = async (req: NextApiRequest, res: NextApiResponse)
 
   const data = req.body;
 
-
-  // if (!data || !data.name || !data.report || !data.efroi || !data.witness || !data.correspondence || !data.notice || !data.accidentDescription 
-  //   || !data.accidentLocation || !data.backToWork || !data.dateOfAccident || !data.documentFolder || !data.firstCheck || !data.lastCheck || !data.lastDayOfWork || !data.companyWeWorkedFor
-  //   || !data.assignedToCompany
-  //   )
-  //   return res.status(400).json({message: "Data Is Missing!"});
-
-
  try{
   await prisma.accidents.update({
     where: {
@@ -33,7 +25,6 @@ const UpdateSelectedAccident = async (req: NextApiRequest, res: NextApiResponse)
       accidentDescription: data.accidentDescription,
       accidentLocation: data.accidentLocation,
       backToWork: data.backToWork,
-      dateOfAccident: data.dateOfAccident,
       documentFolder: data.documentFolder,
       firstCheck: data.firstCheck,
       lastCheck: data.lastCheck,
@@ -41,6 +32,7 @@ const UpdateSelectedAccident = async (req: NextApiRequest, res: NextApiResponse)
       companyWeWorkedFor: data.companyWeWorkedFor,
       assignedToCompany: data.assignedToCompany,
       lastModified: new Date(),
+      dateOfAccident: data.dateOfAccident,
     },
   })
     return res.status(200).json({message: "Accident Updated Successfuly!"});

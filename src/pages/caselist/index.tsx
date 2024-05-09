@@ -16,7 +16,27 @@ const Page = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { accidents } = useSelector(getAccidents);
   const [search, setSearch] = useState("");
-  const [accident, setAccident] = useState<Accidents>({} as Accidents);
+  const [accident, setAccident] = useState<Accidents>({
+    id: 0,
+    name: "",
+    report: "",
+    efroi: "",
+    witness: "",
+    correspondence: "",
+    notice: "",
+    accidentDescription: "",
+    accidentLocation: "",
+    backToWork: "",
+    dateOfAccident: "",
+    documentFolder: "",
+    firstCheck: "",
+    lastCheck: "",
+    lastDayOfWork: "",
+    companyWeWorkedFor: "",
+    assignedToCompany: "",
+    lastModified: new Date(),
+    comments: [],
+  });
   const [createNewAccident, setCreateNewAccident] = useState(false);
   const [response, setResponse] = useState("");
 
@@ -135,7 +155,7 @@ const Page = () => {
                 <CalendarDrawer
                   setData={setAccident}
                   value={accident.dateOfAccident}
-                  change="dateOfAccident"
+                  placeholder="dateOfAccident"
                   data={accident}
                 />
               </div>

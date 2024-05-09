@@ -1,31 +1,61 @@
 import React, { Dispatch, FC } from "react";
+import calendar from "../img/calendar.svg";
 import DateTime from "react-datetime";
-import "react-datetime/css/react-datetime.css";
 import moment from "moment";
+import "react-datetime/css/react-datetime.css";
 import { Accidents } from "@/types";
+import Image from "next/image";
 
 interface Iprops {
-  value: string | undefined;
-  change: string;
   data: Accidents;
+  value?: string;
+  id?: string;
   setData: Dispatch<React.SetStateAction<any>>;
   properties?: string;
+  divProperties?: string;
+  setOneValue?: Dispatch<React.SetStateAction<string>>;
+  imgProperties?: string;
+  placeholder?: string;
+  disabled?: boolean;
 }
 
-const CalendarDrawer: FC<Iprops> = ({ value, change, data, setData, properties }) => {
+const CalendarDrawer: FC<Iprops> = ({
+  data,
+  value,
+  id,
+  setData,
+  properties,
+  disabled = false,
+  divProperties,
+  setOneValue,
+  imgProperties,
+  placeholder,
+}) => {
   const handleChange = (date: string | moment.Moment) => {
-    setData({ ...data, [change]: moment(date).format("MM/DD/YYYY") });
+    setOneValue
+      ? setOneValue(moment(date).format("M/D/YYYY"))
+      : setData({ ...data, [id ? id : "dateOfAccident"]: moment(date).format("M/D/YYYY") });
+  };
+
+  let inputProps = {
+    placeholder: placeholder,
+    id: id,
+    disabled: disabled,
+    className: `w-full h-10 pl-11 py-2 rounded-md border-[2px] border-neutral-200 text-neutral-500 text-base ${properties}`,
   };
 
   return (
-    <DateTime
-      dateFormat={"MM/DD/YYYY"}
-      timeFormat={false}
-      value={value}
-      closeOnSelect={true}
-      onChange={(date) => handleChange(date)}
-      className={`h-9 pl-4 py-2.5 bg-white rounded-lg shadow border border-neutral-200 text-neutral-400 text-sm font-normal flex items-center ${properties}`}
-    />
+    <div className={`w-[312px] relative flex flex-col ${divProperties} `}>
+      <DateTime
+        input={true}
+        dateFormat={"M/D/YYYY"}
+        timeFormat={false}
+        value={value ? value : data.dateOfAccident}
+        inputProps={inputProps}
+        onChange={(date) => handleChange(date)}
+      />
+      <Image src={calendar} className={`absolute top-[25%] left-[15px] ${imgProperties}`} alt="calendar" />
+    </div>
   );
 };
 

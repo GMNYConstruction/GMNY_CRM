@@ -205,10 +205,11 @@ const Extended = () => {
                   <div className="flex items-center">
                     <h1 className="w-[20%]">Date of accident:</h1>
                     <CalendarDrawer
-                      properties={`w-[80%] ${readOnly && "pointer-events-none"}`}
-                      value={accident.dateOfAccident}
-                      change="dateOfAccident"
+                      divProperties="!w-[80%]"
+                      properties={`w-full ${readOnly && "pointer-events-none"}`}
+                      placeholder="Date of accident"
                       data={accident}
+                      id="dateOfAccident"
                       setData={setAccident}
                     />
                   </div>
