@@ -155,6 +155,7 @@ const Page = () => {
                 <CalendarDrawer
                   setData={setAccident}
                   value={accident.dateOfAccident}
+                  divProperties="w-full"
                   placeholder="dateOfAccident"
                   data={accident}
                 />

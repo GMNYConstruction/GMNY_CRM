@@ -1,12 +1,15 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import prisma from "../../../prisma";
-import { json } from "stream/consumers";
- 
+import prisma from "../../../prisma"; 
+import { getTokenAuth } from "./getTokenAuth";
+  
 
 const CreateNewComment = async (req: NextApiRequest, res: NextApiResponse) => {
+  
   if (req.method !== "POST") {
     return res.status(400).json({ message: "Wrong Method" });
   }
+
+  !await getTokenAuth(req) && res.status(401).json({message: "You must be signed in!"});
 
   const data = req.body;
 

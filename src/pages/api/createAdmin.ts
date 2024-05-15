@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../prisma";
 import { hash } from "bcrypt-ts";
+import { getTokenAuth } from "./getTokenAuth";
 
 const CreateAdmin = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
@@ -8,6 +9,8 @@ const CreateAdmin = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
  const data = req.body; 
+ 
+ !await getTokenAuth(req) && res.status(401).json({message: "You must be signed in!"})
 
  if (!data || !data.name || !data.email || !data.password || !data.accessLvl) return res.status(400).json({message: "Data Is Missing!"})
 
