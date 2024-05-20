@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../prisma";
 import { getTokenAuth } from "./getTokenAuth";
+import nextAuth from "next-auth";
  
 
 const GetAllAccidents = async (req: NextApiRequest, res: NextApiResponse) => {

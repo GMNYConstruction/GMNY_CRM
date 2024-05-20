@@ -4,8 +4,7 @@ import { getToken } from "next-auth/jwt"
 
 export const getTokenAuth = async (req: NextApiRequest) => {
   const token = await getToken({ req })
-  if (token) {
-    return true;
-  }  
+  if (token) return token;
+  
   return false;
 }

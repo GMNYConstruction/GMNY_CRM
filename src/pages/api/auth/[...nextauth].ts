@@ -53,6 +53,7 @@ providers: [
 
 callbacks: {
   async jwt({token, user, session} : any) {
+
     if(user) return {
       ...token,
       id: user.id,
@@ -61,6 +62,7 @@ callbacks: {
 
     return token;
   },
+  
   async session({session, token, user}: any) { 
     return {
       ...session,

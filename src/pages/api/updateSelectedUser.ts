@@ -8,7 +8,10 @@ const UpdateSelectedUser = async (req: NextApiRequest, res: NextApiResponse) => 
     return res.status(400).json({ message: "Wrong Method" });
   }
 
-  !await getTokenAuth(req) && res.status(401).json({message: "You must be signed in!"})
+ const token = await getTokenAuth(req) as any;
+
+ if (token === false) res.status(401).json({message: "You must be signed in!"});
+ else if(token?.accessLvl.toLowerCase() !== 'admin') res.status(401).json({message: "You can't perform this action!"});
 
   const data = req.body;
 

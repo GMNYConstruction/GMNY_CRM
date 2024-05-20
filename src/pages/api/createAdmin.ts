@@ -10,7 +10,10 @@ const CreateAdmin = async (req: NextApiRequest, res: NextApiResponse) => {
 
  const data = req.body; 
  
- !await getTokenAuth(req) && res.status(401).json({message: "You must be signed in!"})
+ const token = await getTokenAuth(req) as any;
+ 
+ if (token === false) res.status(401).json({message: "You must be signed in!"});
+ else if(token?.accessLvl.toLowerCase() !== 'admin') res.status(401).json({message: "You can't perform this action!"});
 
  if (!data || !data.name || !data.email || !data.password || !data.accessLvl) return res.status(400).json({message: "Data Is Missing!"})
 

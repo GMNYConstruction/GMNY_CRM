@@ -8,7 +8,7 @@ const CreateAccident = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(400).json({ message: "Wrong Method" });
   }
  
- !await getTokenAuth(req) && res.status(401).json({message: "You must be signed in!"})
+ !await getTokenAuth(req) !== false && res.status(401).json({message: "You must be signed in!"})
 
  const data = req.body; 
 

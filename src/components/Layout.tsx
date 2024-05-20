@@ -17,23 +17,21 @@ const Layout = ({ children }: PropsType) => {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    if (!fetched && !loading) dispatch(fetchAccidents());
-    if (!fetchedUser && !loadingUser) dispatch(fetchUsers());
-  }, [fetched, loading, fetchedUser, loadingUser]);
+    if (!fetched && !loading && session?.user) dispatch(fetchAccidents());
+    if (!fetchedUser && !loadingUser && session?.user) dispatch(fetchUsers());
+  }, [fetched, loading, fetchedUser, loadingUser, session?.user]);
 
   return (
     <div className="flex ">
-      {session ? (
-        <>
-          <SideMenu />
-
-          <div className="w-full h-screen overflow-x-hidden bg-white rounded-tl-[32px] border-l border-t border-neutral-200 px-8 py-4">
-            {children}
-          </div>
-        </>
-      ) : (
-        <> {children} </>
-      )}
+      {session?.user && <SideMenu />}
+      <div
+        className={`${
+          session?.user &&
+          "w-full h-screen overflow-x-hidden bg-white rounded-tl-[32px] border-l border-t border-neutral-200 px-8 py-4"
+        }`}
+      >
+        {children}
+      </div>
     </div>
   );
 };
