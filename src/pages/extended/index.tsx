@@ -227,11 +227,14 @@ const Extended = () => {
                   </div>
 
                   <div className="flex items-center">
-                    <h1 className="w-[20%]">
-                      <a href={accident.documentFolder} target="_blank">
-                        Document Folder
-                      </a>
-                    </h1>
+                    <a
+                      href={accident.documentFolder}
+                      className={`${readOnly ? "w-[40%]" : "w-[20%]"} text-red-500 font-medium text-lg underline`}
+                      target="_blank"
+                    >
+                      Document Folder
+                    </a>
+
                     {!readOnly && (
                       <Input
                         properties={`w-[80%]`}
@@ -397,9 +400,7 @@ const Extended = () => {
                   <h1 className={`w-[95%] resize-none border-b border-neutral-500 text-wrap ${hide && "w-full"}`}>
                     {comment.comment}
                   </h1>
-                  <span>
-                    {comment.user?.name} {comment.dateCreated}
-                  </span>
+                  <span>{comment.dateCreated}</span>
                   {comment.userid === user.id && (
                     <button
                       type="button"
