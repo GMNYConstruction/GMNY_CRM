@@ -17,8 +17,8 @@ import { useReactToPrint } from "react-to-print";
 const Extended = () => {
   const today = new Date().toLocaleDateString("en-US");
   const { data: session } = useSession();
-  const [hide, setHide] = useState(false);
   const user = session?.user as AuthUser;
+  const [hide, setHide] = useState(false);
   const accidentSelected = useGetAccidentById();
   const dispatch = useDispatch<AppDispatch>();
   const [readOnly, setReadOnly] = useState(true);
@@ -397,7 +397,11 @@ const Extended = () => {
             {accidentSelected?.comments?.map((comment) => {
               return (
                 <div key={comment.id} className="rounded-md p-2 flex flex-col gap-1 relative">
-                  <h1 className={`w-[95%] resize-none border-b border-neutral-500 text-wrap ${hide && "w-full"}`}>
+                  <h1
+                    className={`w-[95%] resize-none border-b border-neutral-500 text-wrap whitespace-pre-wrap ${
+                      hide && "w-full"
+                    }`}
+                  >
                     {comment.comment}
                   </h1>
                   <span>{comment.dateCreated}</span>

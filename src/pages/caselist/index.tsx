@@ -56,7 +56,8 @@ const Page = () => {
           accident.name?.toLowerCase().includes(term.toLowerCase()) ||
           accident.dateOfAccident?.toString().toLowerCase().includes(term.toLowerCase()) ||
           accident.companyWeWorkedFor?.toLowerCase().includes(term.toLowerCase()) ||
-          accident.assignedToCompany?.toLowerCase().includes(term.toLowerCase())
+          accident.assignedToCompany?.toLowerCase().includes(term.toLowerCase()) ||
+          accident.accidentLocation?.toLowerCase().includes(term.toLowerCase())
         );
       });
     });

@@ -75,7 +75,7 @@ const AdminCard: FC<IProps> = ({ user }) => {
   };
 
   return (
-    <form onSubmit={handleChangeSubmit} key={user.id} className="flex flex-col gap-4">
+    <form onSubmit={handleChangeSubmit} key={user.id} className="flex flex-col gap-4 border-b pb-4">
       <h1 className={` ${response === "User Updated Successfuly!" ? "text-green-600" : "text-primaryred"}`}>
         {response}
       </h1>

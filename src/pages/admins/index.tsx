@@ -10,8 +10,11 @@ import Select from "@/components/Select";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { setNewUser } from "@/store/Users/setNewUser";
+import { useSession } from "next-auth/react";
 
 const Admins = () => {
+  const { data } = useSession();
+  const user = data?.user as UsersType;
   const dispatch = useDispatch<AppDispatch>();
   const { users } = useSelector(getUsers);
   const [admin, setAdmin] = useState({} as AdminCreate);
@@ -30,9 +33,10 @@ const Admins = () => {
   const filterList = () => {
     return users?.filter((e: UsersType) => {
       if (
-        e.name?.toLowerCase().includes(search.toLowerCase()) ||
-        e.email?.toLowerCase().includes(search.toLowerCase()) ||
-        e.accessLvl?.toLowerCase().includes(search.toLowerCase())
+        e.id !== user?.id &&
+        (e.name?.toLowerCase().includes(search.toLowerCase()) ||
+          e.email?.toLowerCase().includes(search.toLowerCase()) ||
+          e.accessLvl?.toLowerCase().includes(search.toLowerCase()))
       )
         return e;
     });

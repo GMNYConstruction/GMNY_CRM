@@ -1,16 +1,14 @@
 import React, { FC } from "react";
 import Link from "next/link";
 import { AccidentCardInterface } from "@/types";
+import pencil from "../img/pencil.svg";
+import Image from "next/image";
 
 const AccidentCard: FC<AccidentCardInterface> = ({ data }) => {
   return (
-    <div className="flex flex-col gap-3" key={data.id}>
+    <div className="flex justify-between gap-3" key={data.id}>
       <div className="relative w-full h-[170px] border border-neutral-500 rounded-md p-2 flex 2">
-        <div className="w-[10%]">
-          <h1>id:</h1>
-          <h2>{data.id}</h2>
-        </div>
-        <div className="flex w-[35%] flex-col gap-1 justify-center">
+        <div className="flex w-[45%] flex-col gap-1 justify-center">
           <h2>Name: {data.name}</h2>
           <h2>Assigned to: {data.assignedToCompany}</h2>
           <h2>Company we worked for: {data.companyWeWorkedFor}</h2>
@@ -21,6 +19,7 @@ const AccidentCard: FC<AccidentCardInterface> = ({ data }) => {
             </a>
           </h2>
         </div>
+
         <div className="w-[50%] h-full flex flex-col gap-1 justify-center">
           <h2>Description: </h2>
           <textarea
@@ -29,8 +28,11 @@ const AccidentCard: FC<AccidentCardInterface> = ({ data }) => {
             value={data.accidentDescription}
           ></textarea>
         </div>
-        <div className="flex flex-col justify-center items-center w-[5%]">
-          <Link href={`/extended?id=${data.id}`}>...</Link>
+
+        <div className="flex items-center mr-0 ml-auto w-[3%]">
+          <Link href={`/extended?id=${data.id}`}>
+            <Image src={pencil} className="w-7 h-7" alt="pencil" />
+          </Link>
         </div>
       </div>
     </div>
