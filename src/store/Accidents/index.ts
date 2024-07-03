@@ -3,13 +3,22 @@ import { fetchAccidents } from './fetch';
 import { editAccident } from './editAccident';
 import { Accidents } from '@/types';
 import { setNewAccident } from './setNewAccident';
+import { editPage } from './changePage';
+import { useDispatch } from 'react-redux';
+import { AppDispatch } from '../store';
 
 const initialState = {
   accidents: [] as any,
+  search: '',
+  date: '',
+  page: 1,
+  maxPage: 1,
   fetched:false,
   loading:false,
   error:false,
 };
+ 
+
 
 export const allAccidents = createSlice({
     name: "allAccidents",
@@ -17,7 +26,8 @@ export const allAccidents = createSlice({
     reducers: {},
     extraReducers(builder) {
       builder.addCase(fetchAccidents.fulfilled, (state, action) => {
-        state.accidents = action.payload;
+        state.accidents = action.payload.accidents;
+        state.maxPage = action.payload.pages;
         state.fetched = true;
         state.loading = false;
         state.error = false;
@@ -32,6 +42,7 @@ export const allAccidents = createSlice({
         state.error = false;
         state.loading = true;
       });
+
       builder.addCase(editAccident.fulfilled, (state, action) => {
         const selectedAccidentIndex = state.accidents.findIndex((accident:Accidents) => accident.id === action?.payload?.id);
         state.accidents[selectedAccidentIndex] = action.payload;
@@ -50,6 +61,24 @@ export const allAccidents = createSlice({
         state.error = false;
         state.loading = true;
       });
+
+      builder.addCase(editPage.fulfilled, (state, action) => {
+        state.page = action.payload || 1; 
+        state.fetched = true;
+        state.loading = false;
+        state.error = false;
+      });
+      builder.addCase(editPage.rejected, (state, action) => {
+        state.fetched = true;
+        state.loading = false;
+        state.error = true;
+      });
+      builder.addCase(editPage.pending, (state, action) => {
+        state.fetched = false;
+        state.error = false;
+        state.loading = true;
+      });
+
        builder.addCase(setNewAccident.fulfilled, (state, action) => {
         state.accidents.unshift(action.payload);
         state.fetched = true;

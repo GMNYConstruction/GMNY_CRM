@@ -1,20 +1,20 @@
 import React, { FC } from "react";
 
 interface IProps {
-  text: string;
   btype: "submit" | "reset" | "button" | undefined;
   properties?: string | undefined;
-  form?: string;
   onClick?: () => void;
+  children: React.ReactNode;
+  form?: string;
 }
 
-export const Button: FC<IProps> = ({ text, properties, btype, form, onClick }) => (
+export const Button: FC<IProps> = ({ children, properties, btype, onClick, form }) => (
   <button
     onClick={onClick}
     type={btype}
     form={form}
-    className={`text-center text-sm font-medium  leading-tight w-[420px] h-10 px-4 py-2.5 rounded-lg shadow border border-white ${properties}`}
+    className={`text-center text-sm font-medium px-4 py-2.5 rounded-lg shadow border border-neutral-250 border-white ${properties}`}
   >
-    {text}
+    {children}
   </button>
 );

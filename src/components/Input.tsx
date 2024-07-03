@@ -19,7 +19,7 @@ export const Input: FC<IProps> = ({ type, placeholder, id, value, properties, re
       placeholder={placeholder}
       value={value}
       onChange={inputHandler}
-      className={`p-1 px-4 rounded-md border-2 ${properties}`}
+      className={`p-1 px-4 rounded-md border-2 outline-neutral-500 ${properties}`}
       readOnly={readonly}
     />
   );

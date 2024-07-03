@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AccidentCard from "@/components/AccidentCard";
 import { useSelector } from "react-redux";
 import { getAccidents } from "@/store/store";
@@ -11,10 +11,15 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { setNewAccident } from "@/store/Accidents/setNewAccident";
 import { getApiResponse } from "@/utils/getApiResponse";
+import Paggination from "@/components/Paggination";
+import { editPage } from "@/store/Accidents/changePage";
+import { useQuery } from "@tanstack/react-query";
+import { getAccidentsPage } from "@/hooks/fetch/get-accidents";
 
 const Page = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { accidents } = useSelector(getAccidents);
+  const { accidents, maxPage, page } = useSelector(getAccidents);
+  const [pagesArr, setPagesArr] = useState<number[]>([1]);
   const [search, setSearch] = useState("");
   const [accident, setAccident] = useState<Accidents>({
     id: 0,
@@ -40,28 +45,23 @@ const Page = () => {
   const [createNewAccident, setCreateNewAccident] = useState(false);
   const [response, setResponse] = useState("");
 
+  const { data: accidentsPage, isLoading: isLoadingModerationCustomers } = useQuery({
+    queryKey: ["accidentsPage", page, search],
+    queryFn: () => getAccidentsPage(page, 10, search),
+    retry: 1,
+  });
+
+  useEffect(() => {
+    if (accidentsPage?.pages) {
+      setPagesArr(Array.from({ length: accidentsPage.pages }, (_, i) => i + 1));
+    }
+  }, [accidentsPage]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     setAccident((prev) => ({
       ...prev,
       [e.target.id]: e.target.value,
     }));
-  };
-
-  const filterList = () => {
-    const searchTerms = search.split(" ");
-    let finalSearch = [...accidents];
-    searchTerms.forEach((term) => {
-      finalSearch = finalSearch.filter((accident) => {
-        return (
-          accident.name?.toLowerCase().includes(term.toLowerCase()) ||
-          accident.dateOfAccident?.toString().toLowerCase().includes(term.toLowerCase()) ||
-          accident.companyWeWorkedFor?.toLowerCase().includes(term.toLowerCase()) ||
-          accident.assignedToCompany?.toLowerCase().includes(term.toLowerCase()) ||
-          accident.accidentLocation?.toLowerCase().includes(term.toLowerCase())
-        );
-      });
-    });
-    return finalSearch;
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -100,20 +100,26 @@ const Page = () => {
         <div className="w-full flex justify-between">
           <div className="flex gap-2">
             <Button
-              text={createNewAccident ? "Stop Creating New Accident" : "Create New Accident Case"}
               btype="button"
               onClick={() => setCreateNewAccident(!createNewAccident)}
               properties={`bg-primaryred text-white`}
-            />
-            {createNewAccident && <Button text="Submit New Accident" btype="submit" form="accidentForm" />}
+            >
+              {createNewAccident ? "Stop Creating New Accident" : "Create New Accident Case"}
+            </Button>
+            {createNewAccident && (
+              <Button btype="submit" form="accidentForm">
+                Submit New Accident
+              </Button>
+            )}
           </div>
           <div className="flex gap-4 items-center">
-            <input
+            <Input
+              id="search"
               type="text"
               placeholder="search"
-              className="py-2 px-1 border border-black rounded-md"
+              properties="h-[42px]"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              inputHandler={(e) => setSearch(e.target.value)}
             />
           </div>
         </div>
@@ -183,7 +189,17 @@ const Page = () => {
           </div>
         </form>
 
-        {filterList().map((e: any) => {
+        {accidentsPage?.accidents && (
+          <Paggination
+            pagesArr={pagesArr}
+            currentPage={page}
+            onPageClick={(value) => {
+              dispatch(editPage({ page: value }));
+            }}
+          />
+        )}
+
+        {accidentsPage?.accidents?.map((e: any) => {
           return <AccidentCard data={e} key={e.id} />;
         })}
       </div>

@@ -25,7 +25,7 @@ const AccidentCard: FC<AccidentCardInterface> = ({ data }) => {
           <textarea
             disabled
             className="w-full h-full resize-none bg-transparent"
-            value={data.accidentDescription}
+            value={data.accidentDescription || ""}
           ></textarea>
         </div>
 

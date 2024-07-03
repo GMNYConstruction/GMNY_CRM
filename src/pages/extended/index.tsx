@@ -147,14 +147,13 @@ const Extended = () => {
               {response}
             </h1>
             <div className="flex gap-4">
-              {!readOnly && <Button text="Save" btype="submit" />}
-              <Button btype="button" text="Save PDF" onClick={handlePrint} properties={`${!readOnly && "hidden"}`} />
-              <Button
-                text={`${readOnly ? "Edit" : "Cancel"}`}
-                btype="button"
-                onClick={handleEditButton}
-                properties="text-white bg-primaryred"
-              />
+              {!readOnly && <Button btype="submit">Save</Button>}
+              <Button btype="button" onClick={handlePrint} properties={`${!readOnly && "hidden"}`}>
+                Save PDF
+              </Button>
+              <Button btype="button" onClick={handleEditButton} properties="text-white bg-primaryred">
+                {readOnly ? "Edit" : "Cancel"}
+              </Button>
             </div>
           </div>
 
@@ -385,13 +384,15 @@ const Extended = () => {
                 {commentResponse}
               </h1>
               <TextArea
-                properties={`w-full min-h-[80px] max-h-[150px]`}
+                properties={`w-full !min-h-[120px] max-h-[400px]`}
                 placeholder="Enter your comment"
                 value={comment?.comment}
                 id="comment"
                 inputHandler={handleCommentChange}
               />
-              <Button text="Post comment" btype="submit" properties={`bg-primaryred text-white`} />
+              <Button btype="submit" properties={`bg-primaryred text-white`}>
+                Post comment
+              </Button>
             </div>
 
             {accidentSelected?.comments?.map((comment) => {
@@ -409,7 +410,7 @@ const Extended = () => {
                     <button
                       type="button"
                       onClick={() => deleteComment(comment.id)}
-                      className={`absolute right-[2%] top-[10%] ${hide && "hidden"}`}
+                      className={`absolute right-4 bottom-9  ${hide && "hidden"}`}
                     >
                       <Image className="h-[25px] w-[25px]" alt="delete" src={bin} />
                     </button>
