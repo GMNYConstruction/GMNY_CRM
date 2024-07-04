@@ -39,7 +39,7 @@ const CreateNewComment = async (req: NextApiRequest, res: NextApiResponse) => {
       
     })
 
-    return res.status(200).json({message: "Comment posted successfuly!", id: comment.id, case: updateCase});
+    return res.status(200).json({message: "Comment posted successfuly!", id: comment.id, case: updateCase, comment: comment});
 
  }
  catch(err) {

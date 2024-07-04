@@ -16,18 +16,18 @@ const DeleteComment = async (req: NextApiRequest, res: NextApiResponse) => {
  }
  
  try{
-   await prisma.comments.delete({
+   const response = await prisma.comments.delete({
     where:{
         id: data.id,
         userid: data.userid,
     }
    })
+
+   return res.status(200).json({message: "Comment deleted!", id: response?.id});
  }
  catch(err) {
     return res.status(400).json({message: "Error occured", error: err});
- }
-
- return res.status(201).json({message: "Comment deleted!"});
+ } 
 
 };
 

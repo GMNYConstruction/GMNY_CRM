@@ -228,7 +228,9 @@ const Admins = () => {
               />
             </div>
           </div>
-          <Button text="Submit" btype="submit" properties="bg-primaryred text-white" />
+          <Button btype="submit" properties="bg-primaryred text-white w-[300px]">
+            Submit
+          </Button>
         </form>
         <div className="flex flex-col mt-6 gap-4">
           <div className="flex w-full justify-end">

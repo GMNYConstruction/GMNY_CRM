@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { useSelector } from "react-redux";
-import { getAccidents } from "@/store/store";
-import { Accidents } from "@/types";
+import { getCurrentAccident } from "./fetch/get-accidents";
+import { useQuery } from "@tanstack/react-query";
 
 export const useGetAccidentById = () => {
   const router = useRouter();
-  const { accidents } = useSelector(getAccidents);
-  const [accidentSelected, setAccidentSelected] = useState<Accidents>();
+  const id = router?.query?.id;
 
-  useEffect(() => {
-    setAccidentSelected(accidents?.find((a: Accidents) => a.id === Number(router?.query?.id)));
-  }, [router.query.id, accidents]);
+  const { data: accidentSelected } = useQuery({
+    queryKey: ["accidentSelected"],
+    queryFn: () => getCurrentAccident(`${id}`),
+    retry: 1,
+    enabled: !!id,
+  });
 
   return accidentSelected;
 };

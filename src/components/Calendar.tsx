@@ -3,6 +3,7 @@ import calendar from "../img/calendar.svg";
 import DateTime from "react-datetime";
 import moment from "moment";
 import "react-datetime/css/react-datetime.css";
+import Image from "next/image";
 
 interface Iprops {
   id?: string;
@@ -32,7 +33,7 @@ const CalendarDrawer: FC<Iprops> = ({
   placeholder,
 }) => {
   const handleChange = (date: string | moment.Moment) => {
-    const value = moment(date).format("YYYY-MM-DD");
+    const value = moment(date).format("M/D/YYYY");
     if (setOneValue) return setOneValue(value.includes("Invalid") ? "" : value);
     if (id) return setData({ ...data, [id]: value.includes("Invalid") ? "" : value });
 
@@ -42,21 +43,20 @@ const CalendarDrawer: FC<Iprops> = ({
   let inputProps = {
     id: id,
     placeholder: placeholder,
+    value: value ? value : data.dateTime,
     disabled: disabled,
-    className: `w-full h-10 pl-11 py-2 rounded-md border border-neutral-200 text-neutral-500 text-base ${properties}`,
+    className: `w-full h-10 pl-11 py-2 rounded-md border border-neutral-200 text-neutral-500 text-base text-black ${properties}`,
   };
-
   return (
     <div className={`w-[312px] relative flex flex-col ${divProperties} `}>
       <DateTime
         input={true}
-        dateFormat={"YYYY-MM-DD"}
+        dateFormat={"M/D/YYYY"}
         timeFormat={false}
-        value={value ? value : data.dateTime}
         inputProps={inputProps}
         onChange={(date) => handleChange(date)}
       />
-      <img src={calendar} className={`absolute top-[25%] left-[15px] ${imgProperties}`} alt="calendar" />
+      <Image src={calendar} className={`absolute top-[25%] left-[15px] ${imgProperties}`} alt="calendar" />
     </div>
   );
 };

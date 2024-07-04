@@ -16,11 +16,21 @@ import { editPage } from "@/store/Accidents/changePage";
 import { useQuery } from "@tanstack/react-query";
 import { getAccidentsPage } from "@/hooks/fetch/get-accidents";
 
+import loadingIcon from "../../img/loading.svg";
+import notFound from "../../img/noloads.svg";
+import Image from "next/image";
+import { useDebouncedValue } from "@/types/use-debounce";
+
 const Page = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { accidents, maxPage, page } = useSelector(getAccidents);
+  const [page, setPage] = useState(1);
   const [pagesArr, setPagesArr] = useState<number[]>([1]);
   const [search, setSearch] = useState("");
+  const [date, setDate] = useState("");
+  const [filters, setFilters] = useState({
+    search: "",
+    date: "",
+  });
   const [accident, setAccident] = useState<Accidents>({
     id: 0,
     name: "",
@@ -45,15 +55,18 @@ const Page = () => {
   const [createNewAccident, setCreateNewAccident] = useState(false);
   const [response, setResponse] = useState("");
 
-  const { data: accidentsPage, isLoading: isLoadingModerationCustomers } = useQuery({
-    queryKey: ["accidentsPage", page, search],
-    queryFn: () => getAccidentsPage(page, 10, search),
+  const { data: accidentsPage, isLoading: isLoadingAccidents } = useQuery({
+    queryKey: ["accidentsPage", page, useDebouncedValue(filters.search, 400), filters.date],
+    queryFn: () => getAccidentsPage(page, 10, filters.search, filters.date.toString()),
     retry: 1,
   });
 
   useEffect(() => {
-    if (accidentsPage?.pages) {
+    if (accidentsPage) {
       setPagesArr(Array.from({ length: accidentsPage.pages }, (_, i) => i + 1));
+    }
+    if (filters.date) {
+      setPage(1);
     }
   }, [accidentsPage]);
 
@@ -94,6 +107,44 @@ const Page = () => {
     }, 3000);
   };
 
+  const WhatToDisplay = () => {
+    if (isLoadingAccidents)
+      return (
+        <div className="flex flex-col">
+          <Image src={loadingIcon} className="self-center animate-spin" alt="loading" />
+          <h1 className="text-center text-2xl font-medium">Loading...</h1>
+        </div>
+      );
+
+    if (accidentsPage?.accidents?.length === 0)
+      return (
+        <div className="flex flex-col">
+          <Image src={notFound} className="self-center" alt="loading" />
+          <h1 className="text-center text-2xl font-medium">No records</h1>
+        </div>
+      );
+
+    return (
+      <>
+        <Paggination
+          pagesArr={pagesArr}
+          currentPage={page}
+          onPageClick={(value) => {
+            setPage(value);
+          }}
+        />
+        {accidentsPage?.accidents?.map((e: any) => {
+          return <AccidentCard data={e} key={e.id} />;
+        })}
+      </>
+    );
+  };
+
+  const handleFilters = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFilters((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+    setPage(1);
+  };
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-[80%] relative py-4 px-2 flex flex-col gap-4">
@@ -113,13 +164,23 @@ const Page = () => {
             )}
           </div>
           <div className="flex gap-4 items-center">
+            <div className="relative">
+              <CalendarDrawer
+                id="date"
+                value={filters.date}
+                data={filters}
+                setData={setFilters}
+                divProperties="!h-[42px] !w-[200px]"
+                properties="h-[42px]  border-2"
+              />
+            </div>
             <Input
               id="search"
               type="text"
               placeholder="search"
-              properties="h-[42px]"
-              value={search}
-              inputHandler={(e) => setSearch(e.target.value)}
+              properties="h-[42px] w-[200px]"
+              value={filters.search}
+              inputHandler={handleFilters}
             />
           </div>
         </div>
@@ -189,19 +250,7 @@ const Page = () => {
           </div>
         </form>
 
-        {accidentsPage?.accidents && (
-          <Paggination
-            pagesArr={pagesArr}
-            currentPage={page}
-            onPageClick={(value) => {
-              dispatch(editPage({ page: value }));
-            }}
-          />
-        )}
-
-        {accidentsPage?.accidents?.map((e: any) => {
-          return <AccidentCard data={e} key={e.id} />;
-        })}
+        <WhatToDisplay />
       </div>
     </div>
   );

@@ -2,6 +2,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../prisma";
 import { PrismaClient, Prisma } from '@prisma/client';
 import { getTokenAuth } from "./getTokenAuth";
+import { equal } from "assert";
  
 
 const GetAllAccidents = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -19,8 +20,7 @@ const GetAllAccidents = async (req: NextApiRequest, res: NextApiResponse) => {
     pageFetch = 0
   } else pageFetch = (data.page - 1)*10;
 
-  const searchVariants = [{dateOfAccident: {contains: data?.date?.toLowerCase() || '', mode: 'insensitive'}}] as any[]
-
+  const searchVariants = [] as any[]
   data?.search?.split(' ')?.map((term: string) => (
     searchVariants.push(
       { name: { contains: term.toLowerCase(), mode:'insensitive' } },
@@ -31,7 +31,8 @@ const GetAllAccidents = async (req: NextApiRequest, res: NextApiResponse) => {
 
  try{
   const where: Prisma.accidentsWhereInput = {
-    OR: searchVariants
+    OR: searchVariants,
+    AND: data?.date ? {dateOfAccident: data?.date.toString()} : {}
   };
 
 
