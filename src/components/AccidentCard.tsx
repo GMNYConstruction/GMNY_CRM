@@ -13,7 +13,7 @@ const AccidentCard: FC<AccidentCardInterface> = ({ data }) => {
           <h2>Assigned to: {data.assignedToCompany}</h2>
           <h2>Company we worked for: {data.companyWeWorkedFor}</h2>
           <h2>Date of accident: {data.dateOfAccident}</h2>
-          <h2>
+          <h2 className="text-blue-500 font-medium underline underline-offset-2">
             <a href={data.documentFolder} target="_blank">
               Document Folder
             </a>

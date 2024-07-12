@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import AccidentCard from "@/components/AccidentCard";
-import { useSelector } from "react-redux";
-import { getAccidents } from "@/store/store";
 import { Accidents } from "@/types";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
@@ -12,7 +10,6 @@ import { AppDispatch } from "@/store/store";
 import { setNewAccident } from "@/store/Accidents/setNewAccident";
 import { getApiResponse } from "@/utils/getApiResponse";
 import Paggination from "@/components/Paggination";
-import { editPage } from "@/store/Accidents/changePage";
 import { useQuery } from "@tanstack/react-query";
 import { getAccidentsPage } from "@/hooks/fetch/get-accidents";
 
@@ -25,8 +22,6 @@ const Page = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [page, setPage] = useState(1);
   const [pagesArr, setPagesArr] = useState<number[]>([1]);
-  const [search, setSearch] = useState("");
-  const [date, setDate] = useState("");
   const [filters, setFilters] = useState({
     search: "",
     date: "",
@@ -55,7 +50,11 @@ const Page = () => {
   const [createNewAccident, setCreateNewAccident] = useState(false);
   const [response, setResponse] = useState("");
 
-  const { data: accidentsPage, isLoading: isLoadingAccidents } = useQuery({
+  const {
+    data: accidentsPage,
+    isLoading: isLoadingAccidents,
+    error,
+  } = useQuery({
     queryKey: ["accidentsPage", page, useDebouncedValue(filters.search, 400), filters.date],
     queryFn: () => getAccidentsPage(page, 10, filters.search, filters.date.toString()),
     retry: 1,
@@ -68,7 +67,13 @@ const Page = () => {
     if (filters.date) {
       setPage(1);
     }
-  }, [accidentsPage]);
+    if (error) {
+      setResponse("Can't fetch data");
+      setTimeout(() => {
+        setResponse("");
+      }, 10000);
+    }
+  }, [accidentsPage, error]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     setAccident((prev) => ({
@@ -116,7 +121,7 @@ const Page = () => {
         </div>
       );
 
-    if (accidentsPage?.accidents?.length === 0)
+    if (!accidentsPage || accidentsPage?.accidents?.length === 0)
       return (
         <div className="flex flex-col">
           <Image src={notFound} className="self-center" alt="loading" />
@@ -167,9 +172,9 @@ const Page = () => {
             <div className="relative">
               <CalendarDrawer
                 id="date"
-                value={filters.date}
+                value={filters?.date}
                 data={filters}
-                setData={setFilters}
+                setData={handleFilters}
                 divProperties="!h-[42px] !w-[200px]"
                 properties="h-[42px]  border-2"
               />

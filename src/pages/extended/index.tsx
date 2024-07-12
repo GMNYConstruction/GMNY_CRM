@@ -288,7 +288,9 @@ const Extended = () => {
                   <div className="flex items-center">
                     <a
                       href={accident.documentFolder}
-                      className={`${readOnly ? "w-[40%]" : "w-[20%]"} text-red-500 font-medium text-lg underline`}
+                      className={`${
+                        readOnly ? "w-[40%]" : "w-[20%]"
+                      } text-blue-500 font-medium text-lg underline underline-offset-2`}
                       target="_blank"
                     >
                       Document Folder
