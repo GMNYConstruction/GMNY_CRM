@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import Paggination from "@/components/Paggination";
+import CalendarDrawer from "@/components/Calendar";
 import AccidentCard from "@/components/AccidentCard";
 import { Accidents } from "@/types";
-import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
-import CalendarDrawer from "@/components/Calendar";
+import { Button } from "@/components/Button";
 import { TextArea } from "@/components/TextArea";
-import Paggination from "@/components/Paggination";
+import { useDebouncedValue } from "@/types/use-debounce";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AccidentSelect, getAccidentsPage } from "@/hooks/fetch/get-accidents";
-
-import loadingIcon from "../../img/loading.svg";
-import notFound from "../../img/noloads.svg";
-import Image from "next/image";
-import { useDebouncedValue } from "@/types/use-debounce";
 import { useCreateAccidentMutation } from "@/hooks/mutation/accident-mutation";
+
+import Image from "next/image";
+import notFound from "../../img/noloads.svg";
+import loadingIcon from "../../img/loading.svg";
 
 const Page = () => {
   const queryClient = useQueryClient();
@@ -116,7 +116,7 @@ const Page = () => {
     accidentCreate.mutate(accident);
   };
 
-  const WhatToDisplay = () => {
+  const WhatToDisplay = useMemo(() => {
     if (isLoadingAccidents)
       return (
         <div className="flex flex-col">
@@ -147,7 +147,7 @@ const Page = () => {
         <h1 className="text-center text-2xl font-medium">No records</h1>
       </div>
     );
-  };
+  }, [isLoadingAccidents, accidentsPage, pagesArr, page]);
 
   const handleFilters = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -260,7 +260,7 @@ const Page = () => {
           </div>
         </form>
 
-        <WhatToDisplay />
+        {WhatToDisplay}
       </div>
     </div>
   );

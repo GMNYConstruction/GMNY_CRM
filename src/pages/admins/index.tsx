@@ -11,6 +11,8 @@ import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/store/store";
 import { setNewUser } from "@/store/Users/setNewUser";
 import { useSession } from "next-auth/react";
+import { useQuery } from "@tanstack/react-query";
+import { getAdmins } from "@/hooks/fetch/get-admins";
 
 const Admins = () => {
   const { data } = useSession();
@@ -31,16 +33,22 @@ const Admins = () => {
   };
 
   const filterList = () => {
-    return users?.filter((e: UsersType) => {
+    return admins?.filter((e: UsersType) => {
       if (
-        e.id !== user?.id &&
-        (e.name?.toLowerCase().includes(search.toLowerCase()) ||
-          e.email?.toLowerCase().includes(search.toLowerCase()) ||
-          e.accessLvl?.toLowerCase().includes(search.toLowerCase()))
+        e.name?.toLowerCase().includes(search.toLowerCase()) ||
+        e.email?.toLowerCase().includes(search.toLowerCase()) ||
+        e.accessLvl?.toLowerCase().includes(search.toLowerCase())
       )
         return e;
     });
   };
+
+  const { data: admins, isLoading: isLoadingAccidents } = useQuery({
+    queryKey: ["admins"],
+    queryFn: () => getAdmins(user?.id),
+    retry: 1,
+    enabled: !!user?.id,
+  });
 
   const formHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

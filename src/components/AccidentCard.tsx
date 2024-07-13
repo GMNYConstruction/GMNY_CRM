@@ -1,13 +1,13 @@
 import React, { FC } from "react";
-import Link from "next/link";
 import { AccidentCardInterface } from "@/types";
 import pencil from "../img/pencil.svg";
 import Image from "next/image";
+import Link from "next/link";
 
 const AccidentCard: FC<AccidentCardInterface> = ({ data }) => {
   return (
     <div className="flex justify-between gap-3" key={data.id}>
-      <div className="relative w-full h-[170px] border border-neutral-500 rounded-md p-2 flex 2">
+      <div className="relative w-full h-[170px] border border-neutral-500 rounded-md p-2 flex">
         <div className="flex w-[45%] flex-col gap-1 justify-center">
           <h2>Name: {data.name}</h2>
           <h2>Assigned to: {data.assignedToCompany}</h2>
@@ -31,7 +31,7 @@ const AccidentCard: FC<AccidentCardInterface> = ({ data }) => {
 
         <div className="flex items-center mr-0 ml-auto w-[3%]">
           <Link href={`/extended?id=${data.id}`}>
-            <Image src={pencil} className="w-7 h-7" alt="pencil" />
+            <Image src={pencil} alt="Edit" />
           </Link>
         </div>
       </div>

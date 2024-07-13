@@ -35,24 +35,34 @@ const GetAllAccidents = async (req: NextApiRequest, res: NextApiResponse) => {
  try{
   const where: Prisma.accidentsWhereInput = {
     OR: searchVariants,
-    AND: data?.date ? {dateOfAccident: data?.date.toString()} : {}
+    AND: data?.date ? {dateOfAccident: {contains: data?.date.toString(), mode:'insensitive'}} : {} 
   };
 
     const relevanceSQL = searchTerms.map((term: string) => `
     (CASE
       WHEN name ILIKE '%${term}%' THEN 1 ELSE 0 END) +
     (CASE
-      WHEN "assignedToCompany" ILIKE '%${term}%' THEN 1 ELSE 0 END)
+      WHEN "assignedToCompany" ILIKE '%${term}%' THEN 1 ELSE 0 END) + 
+    (CASE
+      WHEN "companyWeWorkedFor" ILIKE '%${term}%' THEN 1 ELSE 0 END)
   `).join(' + ');
 
     const rawQuery = `
     SELECT id,name,"assignedToCompany","companyWeWorkedFor", "dateOfAccident","documentFolder", "accidentDescription", (${relevanceSQL}) AS relevance
     FROM accidents
     WHERE ${searchTerms.map((term: string) => `
-      (name ILIKE '%${term}%' OR "assignedToCompany" ILIKE '%${term}%')
+      (name ILIKE '%${term}%' OR "assignedToCompany" ILIKE '%${term}%' OR "companyWeWorkedFor" ILIKE '%${term}%')
     `).join(' OR ')} AND ("dateOfAccident" ILIKE '%${data?.date}%' )
     ORDER BY relevance DESC, "lastModified" DESC
     LIMIT ${data?.pageSize} OFFSET ${pageFetch}
+  `;
+
+  const countQuery = `
+  SELECT COUNT(*)
+  FROM accidents
+  WHERE ${searchTerms.map((term: string) => `
+    (name ILIKE '%${term}%' OR "assignedToCompany" ILIKE '%${term}%')
+  `).join(' OR ')} ${data?.date && `AND ("dateOfAccident" ILIKE '%${data?.date}%')`}
   `;
 
 
@@ -61,8 +71,8 @@ const GetAllAccidents = async (req: NextApiRequest, res: NextApiResponse) => {
         where,
       }),
       prisma.$queryRawUnsafe(rawQuery)
-    ])
- 
+    ])    
+
     return res.json({accidents: response[1], pages: Math.ceil(Number(response[0])/data?.pageSize), });
  }
  catch(err) {

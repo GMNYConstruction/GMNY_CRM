@@ -129,20 +129,20 @@ const AdminCard: FC<IProps> = ({ user }) => {
         {readOnly ? (
           <Button
             onClick={handleStatus}
-            text={`${user.status ? "Disable Account" : "Activate Account"} `}
             btype="button"
             properties={`w-[200px] text-white ${user.status ? " bg-primaryred" : "bg-green-500"}`}
-          />
+          >
+            {user.status ? "Disable Account" : "Activate Account"}
+          </Button>
         ) : (
-          <Button text="Save changes" btype="submit" properties={`w-[200px] text-white bg-green-500`} />
+          <Button btype="submit" properties={`w-[200px] text-white bg-green-500`}>
+            Save changes
+          </Button>
         )}
 
-        <Button
-          text={`${readOnly ? "Edit" : "Cancel"} `}
-          btype="button"
-          onClick={handleEdit}
-          properties={`w-[200px] bg-primaryred text-white`}
-        />
+        <Button btype="button" onClick={handleEdit} properties={`w-[200px] bg-primaryred text-white`}>
+          {readOnly ? "Edit" : "Cancel"}
+        </Button>
       </div>
     </form>
   );
