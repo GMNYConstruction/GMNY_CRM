@@ -5,21 +5,18 @@ import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
 import CalendarDrawer from "@/components/Calendar";
 import { TextArea } from "@/components/TextArea";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store/store";
-import { setNewAccident } from "@/store/Accidents/setNewAccident";
-import { getApiResponse } from "@/utils/getApiResponse";
 import Paggination from "@/components/Paggination";
-import { useQuery } from "@tanstack/react-query";
-import { getAccidentsPage } from "@/hooks/fetch/get-accidents";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { AccidentSelect, getAccidentsPage } from "@/hooks/fetch/get-accidents";
 
 import loadingIcon from "../../img/loading.svg";
 import notFound from "../../img/noloads.svg";
 import Image from "next/image";
 import { useDebouncedValue } from "@/types/use-debounce";
+import { useCreateAccidentMutation } from "@/hooks/mutation/accident-mutation";
 
 const Page = () => {
-  const dispatch = useDispatch<AppDispatch>();
+  const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [pagesArr, setPagesArr] = useState<number[]>([1]);
   const [filters, setFilters] = useState({
@@ -55,9 +52,40 @@ const Page = () => {
     isLoading: isLoadingAccidents,
     error,
   } = useQuery({
-    queryKey: ["accidentsPage", page, useDebouncedValue(filters.search, 400), filters.date],
+    queryKey: ["accidentsPage", page, useDebouncedValue(filters.search, 400), useDebouncedValue(filters.date, 400)],
     queryFn: () => getAccidentsPage(page, 10, filters.search, filters.date.toString()),
     retry: 1,
+  });
+
+  const accidentCreate = useCreateAccidentMutation({
+    onSuccess: (res) => {
+      queryClient.setQueryData(["accidentsPage", page, filters.search, filters.date], (old: AccidentSelect) => {
+        old?.accidents?.unshift(res?.accident);
+        old?.accidents?.pop();
+        return old;
+      });
+      setResponse(res?.message);
+      setAccident({
+        ...accident,
+        name: "",
+        dateOfAccident: "",
+        companyWeWorkedFor: "",
+        assignedToCompany: "",
+        documentFolder: "",
+        accidentDescription: "",
+      });
+      setCreateNewAccident(!createNewAccident);
+
+      setTimeout(() => {
+        setResponse("");
+      }, 3000);
+    },
+    onError: (data) => {
+      setResponse(data?.response?.data?.detail);
+      setTimeout(() => {
+        setResponse("");
+      }, 3000);
+    },
   });
 
   useEffect(() => {
@@ -85,31 +113,7 @@ const Page = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const result = await getApiResponse({ apiRoute: "/api/createAccident", body: accident });
-
-    setResponse(result.message);
-
-    if (result.message === "New Accident Created!") {
-      dispatch(
-        setNewAccident({
-          newAccident: result.accident,
-        })
-      );
-      setAccident({
-        ...accident,
-        name: "",
-        dateOfAccident: "",
-        companyWeWorkedFor: "",
-        assignedToCompany: "",
-        documentFolder: "",
-        accidentDescription: "",
-      });
-      setCreateNewAccident(!createNewAccident);
-    }
-
-    setTimeout(() => {
-      setResponse("");
-    }, 3000);
+    accidentCreate.mutate(accident);
   };
 
   const WhatToDisplay = () => {
@@ -121,27 +125,27 @@ const Page = () => {
         </div>
       );
 
-    if (!accidentsPage || accidentsPage?.accidents?.length === 0)
+    if (accidentsPage?.accidents && accidentsPage?.accidents?.length !== 0)
       return (
-        <div className="flex flex-col">
-          <Image src={notFound} className="self-center" alt="loading" />
-          <h1 className="text-center text-2xl font-medium">No records</h1>
-        </div>
+        <>
+          <Paggination
+            pagesArr={pagesArr}
+            currentPage={page}
+            onPageClick={(value) => {
+              setPage(value);
+            }}
+          />
+          {accidentsPage?.accidents?.map((e: any) => {
+            return <AccidentCard data={e} key={e.id} />;
+          })}
+        </>
       );
 
     return (
-      <>
-        <Paggination
-          pagesArr={pagesArr}
-          currentPage={page}
-          onPageClick={(value) => {
-            setPage(value);
-          }}
-        />
-        {accidentsPage?.accidents?.map((e: any) => {
-          return <AccidentCard data={e} key={e.id} />;
-        })}
-      </>
+      <div className="flex flex-col">
+        <Image src={notFound} className="self-center" alt="loading" />
+        <h1 className="text-center text-2xl font-medium">No records</h1>
+      </div>
     );
   };
 
@@ -174,7 +178,7 @@ const Page = () => {
                 id="date"
                 value={filters?.date}
                 data={filters}
-                setData={handleFilters}
+                setData={setFilters}
                 divProperties="!h-[42px] !w-[200px]"
                 properties="h-[42px]  border-2"
               />
@@ -228,7 +232,8 @@ const Page = () => {
                 <CalendarDrawer
                   setData={setAccident}
                   value={accident.dateOfAccident}
-                  divProperties="w-full"
+                  divProperties="w-full h-[36px]"
+                  properties="h-[36px]"
                   placeholder="dateOfAccident"
                   data={accident}
                 />

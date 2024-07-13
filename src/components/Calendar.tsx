@@ -33,20 +33,20 @@ const CalendarDrawer: FC<Iprops> = ({
   placeholder,
 }) => {
   const handleChange = (date: string | moment.Moment) => {
-    const value = moment(date).format("M/D/YYYY");
-    if (setOneValue) return setOneValue(value.includes("Invalid") ? "" : value);
-    if (id) return setData({ ...data, [id]: value.includes("Invalid") ? "" : value });
+    const value = moment(date).format("M/D/YYYY").includes("Invalid") ? "" : moment(date).format("M/D/YYYY");
+    if (setOneValue) return setOneValue(value);
+    if (id) return setData({ ...data, [id]: value });
 
-    setData({ ...data, dateTime: value.includes("Invalid") ? "" : value });
+    setData({ ...data, dateTime: value });
   };
 
   let inputProps = {
     id: id,
     placeholder: placeholder,
-    value: value ? value : data.dateTime,
     disabled: disabled,
-    className: `w-full h-10 pl-11 py-2 rounded-md border border-neutral-200 text-neutral-500 text-base text-black ${properties}`,
+    className: `w-full h-10 pl-11 py-2 rounded-md border border-neutral-200 text-neutral-500 text-base ${properties}`,
   };
+
   return (
     <div className={`w-[312px] relative flex flex-col ${divProperties} `}>
       <DateTime
