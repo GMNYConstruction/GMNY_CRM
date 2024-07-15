@@ -12,7 +12,6 @@ export interface CommentType {
   comment: string,
   userid: number,
   dateCreated: string,
-  user?: UsersType
 }
 
 export interface Accidents {

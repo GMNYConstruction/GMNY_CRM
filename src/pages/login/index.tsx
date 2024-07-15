@@ -132,7 +132,9 @@ export default function Home() {
               </p>
             </div>
 
-            <Button btype="submit" text="Sign Up" properties="bg-primaryred text-white mt-8" />
+            <Button btype="submit" properties="bg-primaryred text-white mt-8 w-full">
+              Sign In
+            </Button>
           </div>
         </form>
 

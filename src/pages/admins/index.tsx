@@ -1,26 +1,30 @@
 import React, { useState } from "react";
 import { Button } from "@/components/Button";
 import { Input } from "@/components/Input";
-import { getUsers } from "@/store/store";
-import { useSelector } from "react-redux";
-import { AdminCreate, UsersType } from "@/types";
-import { getApiResponse } from "@/utils/getApiResponse";
+import { AdminCreate, AuthUser, UsersType } from "@/types";
 import AdminCard from "@/components/AdminCard";
 import Select from "@/components/Select";
 import { useDispatch } from "react-redux";
-import { AppDispatch } from "@/store/store";
-import { setNewUser } from "@/store/Users/setNewUser";
 import { useSession } from "next-auth/react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getAdmins } from "@/hooks/fetch/get-admins";
+import { useCreateAdmin, useUpdateAdmin, useUpdateAdminStatus } from "@/hooks/mutation/admin-mutation";
 
 const Admins = () => {
   const { data } = useSession();
+  const queryClient = useQueryClient();
   const user = data?.user as UsersType;
-  const dispatch = useDispatch<AppDispatch>();
-  const { users } = useSelector(getUsers);
-  const [admin, setAdmin] = useState({} as AdminCreate);
+  const [search, setSearch] = useState("");
   const [response, setResponse] = useState("");
   const [errors, setErrors] = useState({} as AdminCreate);
-  const [search, setSearch] = useState("");
+  const [admin, setAdmin] = useState({
+    accessLvl: "",
+    confirmPassword: "",
+    password: "",
+    email: "",
+    name: "",
+    status: false,
+  });
 
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     setAdmin((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -31,16 +35,70 @@ const Admins = () => {
   };
 
   const filterList = () => {
-    return users?.filter((e: UsersType) => {
+    return admins?.filter((e: UsersType) => {
       if (
-        e.id !== user?.id &&
-        (e.name?.toLowerCase().includes(search.toLowerCase()) ||
-          e.email?.toLowerCase().includes(search.toLowerCase()) ||
-          e.accessLvl?.toLowerCase().includes(search.toLowerCase()))
+        e.name?.toLowerCase().includes(search.toLowerCase()) ||
+        e.email?.toLowerCase().includes(search.toLowerCase()) ||
+        e.accessLvl?.toLowerCase().includes(search.toLowerCase())
       )
         return e;
     });
   };
+
+  const { data: admins } = useQuery({
+    queryKey: ["admins"],
+    queryFn: () => getAdmins(user?.id),
+    retry: 1,
+    enabled: !!user?.id,
+  });
+
+  const handleStatusMutation = useUpdateAdminStatus({
+    onSuccess: (data) => {
+      queryClient.setQueryData(["admins"], (old: AuthUser[]) => {
+        const updated = old?.map((item: AuthUser) =>
+          item.id?.toString() === data?.admin?.id?.toString() ? { ...item, ...data?.admin } : item
+        );
+        return updated;
+      });
+    },
+    onError: (data) => {
+      console.log(data?.response?.data?.message);
+    },
+  });
+
+  const handleAdminMutation = useUpdateAdmin({
+    onSuccess: (data) => {
+      queryClient.setQueryData(["admins"], (old: AuthUser[]) => {
+        const updated = old?.map((item: AuthUser) =>
+          item.id?.toString() === data?.admin?.id?.toString() ? { ...item, ...data?.admin } : item
+        );
+        return updated;
+      });
+    },
+    onError: (data) => {
+      console.log(data?.response?.data?.message);
+    },
+  });
+
+  const handleAdminCreateMutation = useCreateAdmin({
+    onSuccess: (data) => {
+      queryClient.setQueryData(["admins"], (old: AuthUser[]) => {
+        old?.push(data?.admin);
+        return old;
+      });
+      setResponse(data?.message);
+      setTimeout(() => {
+        setResponse("");
+      }, 5000);
+    },
+    onError: (data) => {
+      console.log(data?.response?.data?.message);
+      setResponse(data?.response?.data?.message);
+      setTimeout(() => {
+        setResponse("");
+      }, 5000);
+    },
+  });
 
   const formHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -91,30 +149,7 @@ const Admins = () => {
 
     if (errors > 0) return;
 
-    const result = await getApiResponse({ apiRoute: "/api/createAdmin", body: admin });
-
-    setResponse(result.message);
-
-    if (result.message === "User Created!") {
-      dispatch(
-        setNewUser({
-          newUser: result.admin,
-        })
-      );
-
-      setAdmin({
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        accessLvl: "",
-        status: null,
-      });
-    }
-
-    setTimeout(() => {
-      setResponse("");
-    }, 5000);
+    handleAdminCreateMutation.mutate(admin);
   };
 
   return (
@@ -217,7 +252,7 @@ const Admins = () => {
               <Select
                 id="status"
                 options={["Active", "Disabled"]}
-                properties={`ease-in-out w-[350px] duration-300 p-1 px-4 rounded-md border-2 ${
+                properties={`ease-in-out !w-[350px] duration-300 p-1 px-4 rounded-md border-2 ${
                   errors.status && "border-red-500"
                 }`}
                 placeholder="Status"
@@ -228,7 +263,9 @@ const Admins = () => {
               />
             </div>
           </div>
-          <Button text="Submit" btype="submit" properties="bg-primaryred text-white" />
+          <Button btype="submit" properties="bg-primaryred text-white w-[300px]">
+            Submit
+          </Button>
         </form>
         <div className="flex flex-col mt-6 gap-4">
           <div className="flex w-full justify-end">
@@ -240,8 +277,16 @@ const Admins = () => {
               inputHandler={(e) => setSearch(e.target.value)}
             />
           </div>
+
           {filterList()?.map((user: UsersType) => {
-            return <AdminCard key={user.id} user={user} />;
+            return (
+              <AdminCard
+                handleAdminMutation={handleAdminMutation}
+                handleStatusMutation={handleStatusMutation}
+                key={user.id}
+                user={user}
+              />
+            );
           })}
         </div>
       </div>

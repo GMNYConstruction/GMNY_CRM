@@ -1,22 +1,19 @@
 import { UsersType } from "@/types";
 import React, { FC, use, useState } from "react";
 import { Button } from "./Button";
-import { useDispatch } from "react-redux";
-import { editUser } from "@/store/Users/editUser";
-import { AppDispatch } from "@/store/store";
 import { Input } from "./Input";
 import { Select } from "./Select";
-import { getApiResponse } from "@/utils/getApiResponse";
+import { UseMutationResult } from "@tanstack/react-query";
 
 interface IProps {
   user: UsersType;
+  handleStatusMutation: UseMutationResult;
+  handleAdminMutation: UseMutationResult;
 }
 
-const AdminCard: FC<IProps> = ({ user }) => {
-  const dispatch = useDispatch<AppDispatch>();
+const AdminCard: FC<IProps> = ({ user, handleStatusMutation, handleAdminMutation }) => {
   const [changedUser, setChangedUser] = useState<UsersType>(user);
   const [readOnly, setReadOnly] = useState(true);
-  const [response, setResponse] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLSelectElement>) => {
     setChangedUser((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -28,57 +25,18 @@ const AdminCard: FC<IProps> = ({ user }) => {
   };
 
   const handleStatus = async () => {
-    const response = await getApiResponse({
-      apiRoute: "/api/updateUserStatus",
-      body: { id: user.id, status: !user.status },
-    });
-
-    setResponse(response.message);
-
-    if (response.message === "User Updated Successfuly!") {
-      dispatch(
-        editUser({
-          ...user,
-          status: !user.status,
-        })
-      );
-      setChangedUser((prev) => ({
-        ...prev,
-        status: !user.status,
-      }));
-    }
-
-    setTimeout(() => {
-      setResponse("");
-    }, 5000);
+    handleStatusMutation.mutate({ id: user.id, status: !user.status });
   };
 
   const handleChangeSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const response = await getApiResponse({ apiRoute: "/api/updateSelectedUser", body: changedUser });
-
-    setResponse(response.message);
-
-    if (response.message === "User Updated Successfuly!") {
-      dispatch(
-        editUser({
-          ...user,
-          ...changedUser,
-        })
-      );
-      setReadOnly(!readOnly);
-    }
-
-    setTimeout(() => {
-      setResponse("");
-    }, 5000);
+    console.log(changedUser);
+    handleAdminMutation.mutate(changedUser);
+    setReadOnly(true);
   };
 
   return (
     <form onSubmit={handleChangeSubmit} key={user.id} className="flex flex-col gap-4 border-b pb-4">
-      <h1 className={` ${response === "User Updated Successfuly!" ? "text-green-600" : "text-primaryred"}`}>
-        {response}
-      </h1>
       <div className="grid grid-cols-2 w-full gap-2">
         <div className="flex flex-col gap-2">
           <div className="grid grid-cols-[1fr,4fr] items-center gap-2">
@@ -129,20 +87,20 @@ const AdminCard: FC<IProps> = ({ user }) => {
         {readOnly ? (
           <Button
             onClick={handleStatus}
-            text={`${user.status ? "Disable Account" : "Activate Account"} `}
             btype="button"
             properties={`w-[200px] text-white ${user.status ? " bg-primaryred" : "bg-green-500"}`}
-          />
+          >
+            {user.status ? "Disable Account" : "Activate Account"}
+          </Button>
         ) : (
-          <Button text="Save changes" btype="submit" properties={`w-[200px] text-white bg-green-500`} />
+          <Button btype="submit" properties={`w-[200px] text-white bg-green-500`}>
+            Save changes
+          </Button>
         )}
 
-        <Button
-          text={`${readOnly ? "Edit" : "Cancel"} `}
-          btype="button"
-          onClick={handleEdit}
-          properties={`w-[200px] bg-primaryred text-white`}
-        />
+        <Button btype="button" onClick={handleEdit} properties={`w-[200px] bg-primaryred text-white`}>
+          {readOnly ? "Edit" : "Cancel"}
+        </Button>
       </div>
     </form>
   );

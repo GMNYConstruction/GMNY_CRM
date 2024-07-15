@@ -27,7 +27,7 @@ providers: [
  
       const user = res[0];
 
-      if (!user) {
+      if (!user || !user?.name || !user?.accessLvl) {
           throw new Error("No user was found");
       }
        

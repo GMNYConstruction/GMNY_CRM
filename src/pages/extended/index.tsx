@@ -1,45 +1,139 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { useGetAccidentById } from "@/hooks/useGetAccidentById";
-import { useDispatch } from "react-redux";
-import { editAccident } from "@/store/Accidents/editAccident";
-import { AppDispatch } from "@/store/store";
 import { Accidents, CommentType, AuthUser } from "@/types";
 import { Input } from "@/components/Input";
 import CalendarDrawer from "@/components/Calendar";
 import bin from "../../img/rubbish-bin-svgrepo-com.svg";
 import { TextArea } from "@/components/TextArea";
 import { Button } from "@/components/Button";
-import { getApiResponse } from "@/utils/getApiResponse";
 import Image from "next/image";
 import { useReactToPrint } from "react-to-print";
+import { useRouter } from "next/router";
+import { getCurrentAccident } from "@/hooks/fetch/get-accidents";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCreateCommentMutation, useDeleteCommentMutation } from "@/hooks/mutation/comment-mutation";
+import { useUpdateAccidentMutation } from "@/hooks/mutation/accident-mutation";
 
 const Extended = () => {
-  const today = new Date().toLocaleDateString("en-US");
+  const router = useRouter();
+  const id = router?.query?.id;
+  const queryClient = useQueryClient();
   const { data: session } = useSession();
   const user = session?.user as AuthUser;
-  const [hide, setHide] = useState(false);
-  const accidentSelected = useGetAccidentById();
-  const dispatch = useDispatch<AppDispatch>();
-  const [readOnly, setReadOnly] = useState(true);
-  const [response, setResponse] = useState("");
-  const [commentResponse, setCommentResponse] = useState("");
-  const [comment, setComment] = useState<CommentType>({} as CommentType);
-  const [accident, setAccident] = useState<Accidents>({} as Accidents);
   const componentRef = useRef<any>(null);
+  const [hide, setHide] = useState(false);
+  const [response, setResponse] = useState("");
+  const [readOnly, setReadOnly] = useState(true);
+  const today = new Date().toLocaleDateString("en-US");
+  const [commentResponse, setCommentResponse] = useState("");
+  const [comment, setComment] = useState({
+    caseid: 0,
+    comment: "",
+    dateCreated: today,
+    userid: user?.id,
+  });
+  const [accident, setAccident] = useState<Accidents>({
+    id: 0,
+    name: "",
+    report: "",
+    efroi: "",
+    witness: "",
+    correspondence: "",
+    notice: "",
+    accidentDescription: "",
+    accidentLocation: "",
+    backToWork: "",
+    dateOfAccident: "",
+    documentFolder: "",
+    firstCheck: "",
+    lastCheck: "",
+    lastDayOfWork: "",
+    companyWeWorkedFor: "",
+    assignedToCompany: "",
+    lastModified: new Date(),
+    comments: [],
+  });
+
+  const { data: accidentSelected } = useQuery({
+    queryKey: ["accidentSelected"],
+    queryFn: () => getCurrentAccident(`${id}`),
+    retry: 1,
+    enabled: !!id,
+  });
 
   const handlePrint = useReactToPrint({
+    documentTitle: accidentSelected?.name,
     onBeforeGetContent: async () => setHide(true),
     content: () => componentRef.current,
-    documentTitle: accidentSelected?.name,
-    onAfterPrint: () => setHide(false),
     onPrintError: () => setHide(false),
+    onAfterPrint: async () => setHide(false),
   });
 
   const handleEditButton = () => {
     setReadOnly(!readOnly);
-    !readOnly && accidentSelected && setAccident(accidentSelected);
+    if (!readOnly && accidentSelected) {
+      setAccident(accidentSelected);
+    }
   };
+
+  const commentDelete = useDeleteCommentMutation({
+    onSuccess: (res) => {
+      queryClient.setQueryData(["accidentSelected"], (old: Accidents) => {
+        const updated = old
+          ? {
+              ...old,
+              comments: old?.comments?.filter((item: CommentType) => item?.id !== res?.id),
+            }
+          : old;
+        return updated;
+      });
+    },
+    onError: (data) => {
+      console.log(data);
+    },
+  });
+
+  const commentCreate = useCreateCommentMutation({
+    onSuccess: (res) => {
+      queryClient.setQueryData(["accidentSelected"], (old: Accidents) => {
+        old.comments?.unshift(res?.comment);
+        return old;
+      });
+      setCommentResponse("Posted");
+      setTimeout(() => {
+        setCommentResponse("");
+      }, 5000);
+      setComment((prev) => ({
+        ...prev,
+        comment: "",
+      }));
+    },
+    onError: (data) => {
+      console.log(data);
+    },
+  });
+
+  const accidentUpdate = useUpdateAccidentMutation({
+    onSuccess: (res) => {
+      queryClient.setQueryData(["accidentSelected"], (old: Accidents) => {
+        return { ...old, ...res?.accident };
+      });
+      setResponse("Accident Updated Successfuly!");
+      setReadOnly(!readOnly);
+      setTimeout(() => {
+        setResponse("");
+      }, 5000);
+    },
+    onError: (data) => {
+      console.log(data);
+      setReadOnly(!readOnly);
+      accidentSelected && setAccident(accidentSelected);
+      setResponse("Error occured");
+      setTimeout(() => {
+        setResponse("");
+      }, 5000);
+    },
+  });
 
   useEffect(() => {
     accidentSelected && setAccident(accidentSelected);
@@ -50,13 +144,6 @@ const Extended = () => {
         caseid: id,
         userid: user?.id,
         dateCreated: today,
-        user: {
-          id: user?.id,
-          email: user?.email,
-          name: user?.name,
-          accessLvl: user?.accessLvl,
-          status: user?.status,
-        },
       }));
     }
   }, [accidentSelected?.id]);
@@ -74,63 +161,27 @@ const Extended = () => {
 
   const formHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const mutationObj = accident;
+    delete mutationObj.comments;
 
-    const result = await getApiResponse({ apiRoute: "/api/updateSelectedAccident", body: accident });
-
-    setResponse(result.message);
-
-    if (accidentSelected && result.message === "Accident Updated Successfuly!") {
-      dispatch(
-        editAccident({
-          ...accidentSelected,
-          ...accident,
-          comments: accidentSelected.comments,
-        })
-      );
-    }
-
-    setTimeout(() => {
-      setResponse("");
-    }, 5000);
-    setReadOnly(!readOnly);
+    accidentUpdate.mutate(mutationObj);
   };
 
   const formCommentHandler = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const result = await getApiResponse({ apiRoute: "/api/createNewComment", body: comment });
-    setCommentResponse(result.message);
-
-    if (accidentSelected && accidentSelected.comments && result.message === "Comment posted successfuly!") {
-      dispatch(
-        editAccident({
-          ...accidentSelected,
-          comments: [{ ...comment, id: result.id } as CommentType, ...accidentSelected.comments],
-        })
-      );
-
-      setComment((prev) => ({
-        ...prev,
-        comment: "",
-      }));
+    if (!comment.comment) {
+      setCommentResponse("Please enter a valid comment");
+      return setTimeout(() => {
+        setCommentResponse("");
+      }, 4500);
     }
 
-    setTimeout(() => {
-      setCommentResponse("");
-    }, 5000);
+    commentCreate.mutate(comment);
   };
 
   const deleteComment = async (id: number) => {
-    const res = await getApiResponse({ apiRoute: "/api/deleteComment", body: { id: id, userid: user.id } });
-
-    if (res.message === "Comment deleted!" && accidentSelected && accidentSelected.comments) {
-      dispatch(
-        editAccident({
-          ...accidentSelected,
-          comments: accidentSelected.comments.filter((item) => item.id !== id),
-        })
-      );
-    }
+    commentDelete.mutate({ id: id, userid: user.id });
   };
 
   return (
@@ -146,15 +197,19 @@ const Extended = () => {
             <h1 className={`${response === "Accident Updated Successfuly!" ? "text-green-600" : "text-red-500"}`}>
               {response}
             </h1>
+
             <div className="flex gap-4">
-              {!readOnly && <Button text="Save" btype="submit" />}
-              <Button btype="button" text="Save PDF" onClick={handlePrint} properties={`${!readOnly && "hidden"}`} />
-              <Button
-                text={`${readOnly ? "Edit" : "Cancel"}`}
-                btype="button"
-                onClick={handleEditButton}
-                properties="text-white bg-primaryred"
-              />
+              {!readOnly && (
+                <Button btype="submit" properties="w-[250px]">
+                  Save
+                </Button>
+              )}
+              <Button btype="button" onClick={handlePrint} properties={`${!readOnly && "hidden"} w-[250px]`}>
+                Save PDF
+              </Button>
+              <Button btype="button" onClick={handleEditButton} properties="text-white bg-primaryred w-[250px]">
+                {readOnly ? "Edit" : "Cancel"}
+              </Button>
             </div>
           </div>
 
@@ -162,10 +217,6 @@ const Extended = () => {
             <div className="relative w-full flex flex-col">
               <div className={`w-full py-4 px-2 rounded-md flex gap-2 h-auto ${hide && "flex-col"}`}>
                 <div className={`rounded-md p-3 w-full flex flex-col gap-2`}>
-                  <div className="flex items-center">
-                    <h1 className="w-[20%]">ID:</h1>
-                    <h1 className="w-[70%]">{accident.id}</h1>
-                  </div>
                   <div className="flex items-center">
                     <h1 className="w-[20%]">Name:</h1>
                     <Input
@@ -191,7 +242,7 @@ const Extended = () => {
                   </div>
 
                   <div className="flex items-center">
-                    <h1 className="w-[20%]">Comapny We Worked For:</h1>
+                    <h1 className="w-[20%]">Worked For:</h1>
                     <Input
                       properties={`w-[80%]`}
                       value={accident.companyWeWorkedFor}
@@ -206,8 +257,10 @@ const Extended = () => {
                     <h1 className="w-[20%]">Date of accident:</h1>
                     <CalendarDrawer
                       divProperties="!w-[80%]"
-                      properties={`w-full ${readOnly && "pointer-events-none"}`}
+                      properties={`w-full ${readOnly && "pointer-events-none"} !px-4`}
+                      imgProperties="!right-4 !left-auto"
                       placeholder="Date of accident"
+                      value={accident?.dateOfAccident}
                       data={accident}
                       id="dateOfAccident"
                       setData={setAccident}
@@ -229,7 +282,9 @@ const Extended = () => {
                   <div className="flex items-center">
                     <a
                       href={accident.documentFolder}
-                      className={`${readOnly ? "w-[40%]" : "w-[20%]"} text-red-500 font-medium text-lg underline`}
+                      className={`${
+                        readOnly ? "w-[40%]" : "w-[20%]"
+                      } text-blue-500 font-medium text-lg underline underline-offset-2`}
                       target="_blank"
                     >
                       Document Folder
@@ -379,37 +434,37 @@ const Extended = () => {
           <h1 className="w-[35%]">Comments: </h1>
           <div className="flex flex-col gap-3">
             <div className={`flex flex-col gap-2 ${hide && "hidden"}`}>
-              <h1
-                className={`${commentResponse === "Comment posted successfuly!" ? "text-green-600" : "text-red-500"}`}
-              >
+              <h1 className={`${commentResponse.toLowerCase() === "posted" ? "text-green-600" : "text-red-500"}`}>
                 {commentResponse}
               </h1>
               <TextArea
-                properties={`w-full min-h-[80px] max-h-[150px]`}
+                properties={`w-full !min-h-[120px] max-h-[400px]`}
                 placeholder="Enter your comment"
                 value={comment?.comment}
                 id="comment"
                 inputHandler={handleCommentChange}
               />
-              <Button text="Post comment" btype="submit" properties={`bg-primaryred text-white`} />
+              <Button btype="submit" properties={`bg-primaryred text-white`}>
+                Post comment
+              </Button>
             </div>
 
-            {accidentSelected?.comments?.map((comment) => {
+            {accidentSelected?.comments?.map((comment: any) => {
               return (
-                <div key={comment.id} className="rounded-md p-2 flex flex-col gap-1 relative">
+                <div key={comment?.id} className="rounded-md p-2 flex flex-col gap-1 relative">
                   <h1
                     className={`w-[95%] resize-none border-b border-neutral-500 text-wrap whitespace-pre-wrap ${
                       hide && "w-full"
                     }`}
                   >
-                    {comment.comment}
+                    {comment?.comment}
                   </h1>
-                  <span>{comment.dateCreated}</span>
+                  <span>{comment?.dateCreated}</span>
                   {comment.userid === user.id && (
                     <button
                       type="button"
-                      onClick={() => deleteComment(comment.id)}
-                      className={`absolute right-[2%] top-[10%] ${hide && "hidden"}`}
+                      onClick={() => deleteComment(comment?.id)}
+                      className={`absolute right-4 bottom-9  ${hide && "hidden"}`}
                     >
                       <Image className="h-[25px] w-[25px]" alt="delete" src={bin} />
                     </button>
