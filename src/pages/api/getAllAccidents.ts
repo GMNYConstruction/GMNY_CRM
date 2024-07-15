@@ -16,10 +16,7 @@ const GetAllAccidents = async (req: NextApiRequest, res: NextApiResponse) => {
   
   if(!data || !data?.page || !data?.pageSize) return res.status(400).json({ message: "Wrong Method" });
 
-  let pageFetch
-  if(data.page <= 0) { 
-    pageFetch = 0
-  } else pageFetch = (data.page - 1)*data?.pageSize;
+  let pageFetch = data?.page === 0 ? 0 :(data.page - 1)*data?.pageSize; 
 
   const searchVariants = [] as any[]
   const searchTerms = data?.search?.trim()?.split(' ')
@@ -52,26 +49,17 @@ const GetAllAccidents = async (req: NextApiRequest, res: NextApiResponse) => {
     FROM accidents
     WHERE ${searchTerms.map((term: string) => `
       (name ILIKE '%${term}%' OR "assignedToCompany" ILIKE '%${term}%' OR "companyWeWorkedFor" ILIKE '%${term}%')
-    `).join(' OR ')} AND ("dateOfAccident" ILIKE '%${data?.date}%' )
+    `).join(' OR ')} ${data?.date && `AND ("dateOfAccident" ILIKE '%${data?.date}%')`} 
     ORDER BY relevance DESC, "lastModified" DESC
     LIMIT ${data?.pageSize} OFFSET ${pageFetch}
   `;
 
-  const countQuery = `
-  SELECT COUNT(*)
-  FROM accidents
-  WHERE ${searchTerms.map((term: string) => `
-    (name ILIKE '%${term}%' OR "assignedToCompany" ILIKE '%${term}%')
-  `).join(' OR ')} ${data?.date && `AND ("dateOfAccident" ILIKE '%${data?.date}%')`}
-  `;
-
-
     const response = await prisma.$transaction([
       prisma.accidents.count({
         where,
-      }),
+      }), 
       prisma.$queryRawUnsafe(rawQuery)
-    ])    
+    ])     
 
     return res.json({accidents: response[1], pages: Math.ceil(Number(response[0])/data?.pageSize), });
  }
