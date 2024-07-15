@@ -15,17 +15,28 @@ const CreateAdmin = async (req: NextApiRequest, res: NextApiResponse) => {
  if (token === false) res.status(401).json({message: "You must be signed in!"});
  else if(token?.accessLvl.toLowerCase() !== 'admin') res.status(401).json({message: "You can't perform this action!"});
 
- if (!data || !data.name || !data.email || !data.password || !data.accessLvl) return res.status(400).json({message: "Data Is Missing!"})
+ console.log(data)
+
+ if (!data || !data.name || !data.email || !data.password || !data.accessLvl || !data.status) return res.status(400).json({message: "Data Is Missing!"})
 
  const hashedPassword = await hash(data.password, 10);
 
+ 
  try{
    const result = await prisma.users.create({
         data: {
             name: data.name,
             email: data.email,
             password: hashedPassword,
-            accessLvl: data.accessLvl
+            accessLvl: data.accessLvl,
+            status: data.status,
+        },
+        select:{
+          name: true,
+          id: true,
+          accessLvl: true,
+          status: true,
+          email: true,
         }
     })
      return res.status(201).json({message: "User Created!", admin: result })

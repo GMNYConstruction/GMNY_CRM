@@ -4,22 +4,21 @@ import { getTokenAuth } from "./getTokenAuth";
  
 
 const UpdateSelectedUser = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method !== "POST") {
-    return res.status(400).json({ message: "Wrong Method" });
-  }
+ if (req.method !== "POST") {
+   return res.status(400).json({ message: "Wrong Method" });
+ }
 
  const token = await getTokenAuth(req) as any;
 
  if (token === false) res.status(401).json({message: "You must be signed in!"});
  else if(token?.accessLvl.toLowerCase() !== 'admin') res.status(401).json({message: "You can't perform this action!"});
 
-  const data = req.body;
+ const data = req.body;
 
-
-  if (!data || !data.id || !data.name || !data.email || !data.accessLvl) return res.status(400).json({message: "Data Is Missing!"})
+ if (!data || !data.id || !data.name || !data.email || !data.accessLvl) return res.status(400).json({message: "Data Is Missing!"})
 
  try{
-  await prisma.users.update({
+  const result = await prisma.users.update({
     where: {
       id: data.id,
     },
@@ -28,8 +27,15 @@ const UpdateSelectedUser = async (req: NextApiRequest, res: NextApiResponse) => 
       email: data.email,
       accessLvl: data.accessLvl,
     },
+    select: {
+      name: true,
+      accessLvl: true,
+      email: true,
+      id: true,
+      status: true,
+    }
   })
-    return res.status(200).json({message: "User Updated Successfuly!"});
+    return res.status(200).json({message: "User Updated Successfuly!", admin: result});
 
  }
  catch(err) {

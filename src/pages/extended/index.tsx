@@ -1,16 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { useGetAccidentById } from "@/hooks/useGetAccidentById";
-import { useDispatch } from "react-redux";
-import { editAccident } from "@/store/Accidents/editAccident";
-import { AppDispatch } from "@/store/store";
 import { Accidents, CommentType, AuthUser } from "@/types";
 import { Input } from "@/components/Input";
 import CalendarDrawer from "@/components/Calendar";
 import bin from "../../img/rubbish-bin-svgrepo-com.svg";
 import { TextArea } from "@/components/TextArea";
 import { Button } from "@/components/Button";
-import { getApiResponse } from "@/utils/getApiResponse";
 import Image from "next/image";
 import { useReactToPrint } from "react-to-print";
 import { useRouter } from "next/router";
@@ -26,11 +21,10 @@ const Extended = () => {
   const { data: session } = useSession();
   const user = session?.user as AuthUser;
   const componentRef = useRef<any>(null);
-  const dispatch = useDispatch<AppDispatch>();
-  const today = new Date().toLocaleDateString("en-US");
   const [hide, setHide] = useState(false);
-  const [readOnly, setReadOnly] = useState(true);
   const [response, setResponse] = useState("");
+  const [readOnly, setReadOnly] = useState(true);
+  const today = new Date().toLocaleDateString("en-US");
   const [commentResponse, setCommentResponse] = useState("");
   const [comment, setComment] = useState({
     caseid: 0,
@@ -133,7 +127,7 @@ const Extended = () => {
     onError: (data) => {
       console.log(data);
       setReadOnly(!readOnly);
-      setAccident(accidentSelected);
+      accidentSelected && setAccident(accidentSelected);
       setResponse("Error occured");
       setTimeout(() => {
         setResponse("");

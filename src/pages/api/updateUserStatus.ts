@@ -18,15 +18,22 @@ const UpdateUserStatus = async (req: NextApiRequest, res: NextApiResponse) => {
   if (!data || !data.id) return res.status(400).json({message: "Data Is Missing!"})
 
  try{
-  await prisma.users.update({
+  const result = await prisma.users.update({
     where: {
       id: data.id,
     },
     data: {
         status: data.status
     },
+    select: {
+      name: true,
+      status: true,
+      id: true,
+      accessLvl: true,
+      email: true,
+    }
   })
-    return res.status(200).json({message: "User Updated Successfuly!"});
+    return res.status(200).json({message: "User Updated Successfuly!", admin: result});
 
  }
  catch(err) {
