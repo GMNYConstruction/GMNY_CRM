@@ -60,6 +60,7 @@ const Page = () => {
   const accidentCreate = useCreateAccidentMutation({
     onSuccess: (res) => {
       queryClient.setQueryData(["accidentsPage", page, filters.search, filters.date], (old: AccidentSelect) => {
+        console.log(old?.accidents, res);
         old?.accidents?.unshift(res?.accident);
         old?.accidents?.pop();
         return old;
@@ -147,7 +148,7 @@ const Page = () => {
         <h1 className="text-center text-2xl font-medium">No records</h1>
       </div>
     );
-  }, [isLoadingAccidents, accidentsPage, pagesArr, page]);
+  }, [isLoadingAccidents, accidentsPage?.accidents, accidentsPage, accidentCreate, pagesArr, page]);
 
   const handleFilters = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters((prev) => ({ ...prev, [e.target.id]: e.target.value }));
