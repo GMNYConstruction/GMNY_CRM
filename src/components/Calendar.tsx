@@ -44,7 +44,7 @@ const CalendarDrawer: FC<Iprops> = ({
     id: id,
     placeholder: placeholder,
     disabled: disabled,
-    className: `w-full h-10 pl-11 py-2 rounded-md border border-neutral-200 text-neutral-500 text-base ${properties}`,
+    className: `w-full h-10 pl-11 py-2 rounded-md border border-neutral-200 text-black text-neutral-500 text-base ${properties}`,
   };
 
   return (
@@ -53,6 +53,7 @@ const CalendarDrawer: FC<Iprops> = ({
         input={true}
         dateFormat={"M/D/YYYY"}
         timeFormat={false}
+        value={value}
         inputProps={inputProps}
         onChange={(date) => handleChange(date)}
       />
