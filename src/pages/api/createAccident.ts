@@ -13,7 +13,7 @@ const CreateAccident = async (req: NextApiRequest, res: NextApiResponse) => {
  const data = req.body; 
 
  if (!data || !data.name) return res.status(400).json({message: "Data Is Missing!"})
- 
+
  try{
    const response = await prisma.accidents.create({
         data: {
