@@ -60,7 +60,6 @@ const Page = () => {
   const accidentCreate = useCreateAccidentMutation({
     onSuccess: (res) => {
       queryClient.setQueryData(["accidentsPage", page, filters.search, filters.date], (old: AccidentSelect) => {
-        console.log(old?.accidents, res);
         old?.accidents?.unshift(res?.accident);
         old?.accidents?.pop();
         return old;
@@ -235,7 +234,8 @@ const Page = () => {
                   value={accident.dateOfAccident}
                   divProperties="w-full h-[36px]"
                   properties="h-[36px]"
-                  placeholder="dateOfAccident"
+                  placeholder="Date of Accident"
+                  id="dateOfAccident"
                   data={accident}
                 />
               </div>
