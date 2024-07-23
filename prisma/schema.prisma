@@ -3,13 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model accidents {
-  id                  Int        @id(map: "accidentsrep_pkey") @default(autoincrement())
+  id                  Int        @id(map: "accidentsrep_pkey") @unique @default(autoincrement())
   name                String?    @db.VarChar
   report              String?    @db.VarChar
   efroi               String?    @db.VarChar

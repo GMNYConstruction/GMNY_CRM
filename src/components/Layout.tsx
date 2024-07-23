@@ -13,12 +13,12 @@ const Layout = ({ children }: PropsType) => {
   const { data: session } = useSession();
 
   return (
-    <div className="flex ">
+    <div className="flex h-screen">
       {session?.user && route.pathname !== "/" && <SideMenu />}
       <div
-        className={`${
+        className={`w-full h-full ${
           session?.user &&
-          "w-full h-screen overflow-x-hidden bg-white rounded-tl-[32px] border-l border-t border-neutral-200 px-8 py-4"
+          " overflow-x-hidden bg-white rounded-tl-[32px] border-l border-t border-neutral-200 px-8 py-4"
         }`}
       >
         {children}
