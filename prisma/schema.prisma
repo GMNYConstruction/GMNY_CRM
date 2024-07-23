@@ -24,7 +24,7 @@ model accidents {
   lastCheck           String?    @db.VarChar
   lastDayOfWork       String?    @db.VarChar
   companyWeWorkedFor  String?    @db.VarChar
-  lastModified        DateTime?  @db.Date
+  lastModified        DateTime?  @db.Timestamptz(6)
   accidentLocation    String?    @db.VarChar
   comments            comments[]
 }
