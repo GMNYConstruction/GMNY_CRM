@@ -12,7 +12,7 @@ const index = () => {
       </Link>
       <iframe
         src="https://na4.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhBFZNDAxOsEhxQDv37WVZpcSsIPVybM_svqi8dZz7StACKmRWw4vUL3ezQZXYSjEZg*&hosted=false"
-        className="min-h-[460px] xs-max:!h-[90%] w-full h-full self-center"
+        className="min-h-[460px] xs-max:!h-[86%] w-full h-full self-center"
         loading="eager"
       ></iframe>
     </div>
