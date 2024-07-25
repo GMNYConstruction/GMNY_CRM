@@ -136,7 +136,7 @@ const Extended = () => {
   });
 
   useEffect(() => {
-    accidentSelected && setAccident(accidentSelected);
+    accidentSelected && setAccident({ ...accidentSelected, lastModified: new Date() });
     if (accidentSelected?.id) {
       const id = accidentSelected?.id;
       setComment((prev) => ({
