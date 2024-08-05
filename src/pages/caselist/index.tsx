@@ -26,26 +26,15 @@ const Page = () => {
     search: "",
     date: "",
   });
-  const [accident, setAccident] = useState<Accidents>({
+  const [accident, setAccident] = useState({
     id: 0,
     name: "",
-    report: "",
-    efroi: "",
-    witness: "",
-    correspondence: "",
-    notice: "",
     accidentDescription: "",
-    accidentLocation: "",
-    backToWork: "",
     dateOfAccident: "",
     documentFolder: "",
-    firstCheck: "",
-    lastCheck: "",
-    lastDayOfWork: "",
     companyWeWorkedFor: "",
     assignedToCompany: "",
     lastModified: new Date(),
-    comments: [],
   });
 
   const normalizeData = (data: Accidents[]) => {
@@ -62,11 +51,7 @@ const Page = () => {
     }));
   };
 
-  const {
-    data: accidentsPage,
-    isLoading: isLoadingAccidents,
-    error,
-  } = useQuery({
+  const { data: accidentsPage, isLoading: isLoadingAccidents } = useQuery({
     queryKey: ["accidentsPage", page, useDebouncedValue(filters.search, 400), useDebouncedValue(filters.date, 400)],
     queryFn: () => getAccidentsPage(page, 12, filters.search, filters.date.toString()),
     retry: 1,
@@ -147,15 +132,7 @@ const Page = () => {
             return <AccidentCard data={e} key={e.id} />;
           })} */}
           <Table
-            headers={[
-              "name",
-              "Assigned to",
-              "Worked for",
-              "Date of Accident",
-              "Accident Location",
-              "Documents",
-              "Action",
-            ]}
+            headers={["Name", "Assigned to", "Worked for", "DOL", "Accident Location", "Documents", "Action"]}
             values={normalizeData(accidentsPage?.accidents) as any}
           />
         </>
@@ -167,15 +144,7 @@ const Page = () => {
         <h1 className="text-center text-2xl font-medium">No records</h1>
       </div>
     );
-  }, [
-    isLoadingAccidents,
-    accidentsPage?.accidents,
-    accidentsPage,
-    accidentCreate,
-    pagesArr,
-    page,
-    normalizeData(accidentsPage?.accidents as any),
-  ]);
+  }, [accidentsPage?.accidents, accidentsPage, accidentCreate.isSuccess, pagesArr, page]);
 
   const handleFilters = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters((prev) => ({ ...prev, [e.target.id]: e.target.value }));
