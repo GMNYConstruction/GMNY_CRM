@@ -14,11 +14,14 @@ import { useCreateAccidentMutation } from "@/hooks/mutation/accident-mutation";
 import Image from "next/image";
 import notFound from "../../img/noloads.svg";
 import loadingIcon from "../../img/loading.svg";
+import { Table } from "@/components/TableComponent";
 
 const Page = () => {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [pagesArr, setPagesArr] = useState<number[]>([1]);
+  const [createNewAccident, setCreateNewAccident] = useState(false);
+  const [response, setResponse] = useState("");
   const [filters, setFilters] = useState({
     search: "",
     date: "",
@@ -44,8 +47,20 @@ const Page = () => {
     lastModified: new Date(),
     comments: [],
   });
-  const [createNewAccident, setCreateNewAccident] = useState(false);
-  const [response, setResponse] = useState("");
+
+  const normalizeData = (data: Accidents[]) => {
+    return data?.map((item: Accidents) => ({
+      id: item?.id,
+      tableData: [
+        item?.name,
+        item?.assignedToCompany,
+        item?.companyWeWorkedFor,
+        item?.dateOfAccident,
+        item?.accidentLocation,
+        item?.documentFolder,
+      ],
+    }));
+  };
 
   const {
     data: accidentsPage,
@@ -53,7 +68,7 @@ const Page = () => {
     error,
   } = useQuery({
     queryKey: ["accidentsPage", page, useDebouncedValue(filters.search, 400), useDebouncedValue(filters.date, 400)],
-    queryFn: () => getAccidentsPage(page, 10, filters.search, filters.date.toString()),
+    queryFn: () => getAccidentsPage(page, 12, filters.search, filters.date.toString()),
     retry: 1,
   });
 
@@ -95,13 +110,7 @@ const Page = () => {
     if (filters.date) {
       setPage(1);
     }
-    if (error) {
-      setResponse("Can't fetch data");
-      setTimeout(() => {
-        setResponse("");
-      }, 10000);
-    }
-  }, [accidentsPage, error]);
+  }, [accidentsPage?.pages, filters?.date]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>) => {
     setAccident((prev) => ({
@@ -110,9 +119,8 @@ const Page = () => {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     accidentCreate.mutate(accident);
   };
 
@@ -135,9 +143,21 @@ const Page = () => {
               setPage(value);
             }}
           />
-          {accidentsPage?.accidents?.map((e: any) => {
+          {/* {accidentsPage?.accidents?.map((e: any) => {
             return <AccidentCard data={e} key={e.id} />;
-          })}
+          })} */}
+          <Table
+            headers={[
+              "name",
+              "Assigned to",
+              "Worked for",
+              "Date of Accident",
+              "Accident Location",
+              "Documents",
+              "Action",
+            ]}
+            values={normalizeData(accidentsPage?.accidents) as any}
+          />
         </>
       );
 
@@ -147,7 +167,15 @@ const Page = () => {
         <h1 className="text-center text-2xl font-medium">No records</h1>
       </div>
     );
-  }, [isLoadingAccidents, accidentsPage?.accidents, accidentsPage, accidentCreate, pagesArr, page]);
+  }, [
+    isLoadingAccidents,
+    accidentsPage?.accidents,
+    accidentsPage,
+    accidentCreate,
+    pagesArr,
+    page,
+    normalizeData(accidentsPage?.accidents as any),
+  ]);
 
   const handleFilters = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -156,7 +184,7 @@ const Page = () => {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="w-[80%] relative py-4 px-2 flex flex-col gap-4">
+      <div className="w-full relative py-4 px-2 flex flex-col gap-4">
         <div className="w-full flex justify-between">
           <div className="flex gap-2">
             <Button

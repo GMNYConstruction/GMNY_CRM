@@ -25,6 +25,7 @@ const GetAllAccidents = async (req: NextApiRequest, res: NextApiResponse) => {
       { name: { contains: term.toLowerCase(), mode:'insensitive' } },
       { assignedToCompany: { contains: term.toLowerCase(), mode:'insensitive' } },
       { companyWeWorkedFor: { contains: term.toLowerCase(), mode:'insensitive' } },
+      { accidentLocation: { contains: term.toLowerCase(), mode:'insensitive' } },
       ) 
     ))
 
@@ -32,7 +33,7 @@ const GetAllAccidents = async (req: NextApiRequest, res: NextApiResponse) => {
  try{
   const where: Prisma.accidentsWhereInput = {
     OR: searchVariants,
-    AND: data?.date ? {dateOfAccident: {contains: data?.date.toString(), mode:'insensitive'}} : {} 
+    AND: {dateOfAccident: {contains: data?.date.toString(), mode:'insensitive'}} 
   };
 
     const relevanceSQL = searchTerms.map((term: string) => `
@@ -41,15 +42,17 @@ const GetAllAccidents = async (req: NextApiRequest, res: NextApiResponse) => {
     (CASE
       WHEN "assignedToCompany" ILIKE '%${term}%' THEN 1 ELSE 0 END) + 
     (CASE
+      WHEN "accidentLocation" ILIKE '%${term}%' THEN 1 ELSE 0 END) + 
+    (CASE
       WHEN "companyWeWorkedFor" ILIKE '%${term}%' THEN 1 ELSE 0 END)
   `).join(' + ');
 
     const rawQuery = `
-    SELECT id,name,"assignedToCompany","companyWeWorkedFor", "dateOfAccident","documentFolder", "accidentDescription", (${relevanceSQL}) AS relevance
+    SELECT id,name,"assignedToCompany","companyWeWorkedFor", "dateOfAccident","documentFolder", "accidentDescription","accidentLocation", (${relevanceSQL}) AS relevance
     FROM accidents
     WHERE ${searchTerms.map((term: string) => `
-      (name ILIKE '%${term}%' OR "assignedToCompany" ILIKE '%${term}%' OR "companyWeWorkedFor" ILIKE '%${term}%')
-    `).join(' OR ')} ${data?.date && `AND ("dateOfAccident" ILIKE '%${data?.date}%')`} 
+      (name ILIKE '%${term}%' OR "assignedToCompany" ILIKE '%${term}%' OR "companyWeWorkedFor" ILIKE '%${term}%' OR "accidentLocation" ILIKE '%${term}%')
+    `).join(' OR ')} AND ("dateOfAccident" ILIKE '%${data?.date}%') 
     ORDER BY relevance DESC, "lastModified" DESC
     LIMIT ${data?.pageSize} OFFSET ${pageFetch}
   `;
