@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import Paggination from "@/components/Paggination";
 import CalendarDrawer from "@/components/Calendar";
-import AccidentCard from "@/components/AccidentCard";
 import { Accidents } from "@/types";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
@@ -128,9 +127,6 @@ const Page = () => {
               setPage(value);
             }}
           />
-          {/* {accidentsPage?.accidents?.map((e: any) => {
-            return <AccidentCard data={e} key={e.id} />;
-          })} */}
           <Table
             headers={["Name", "Assigned to", "Worked for", "DOL", "Accident Location", "Documents", "Action"]}
             values={normalizeData(accidentsPage?.accidents) as any}
