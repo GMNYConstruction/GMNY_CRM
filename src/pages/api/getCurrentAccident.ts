@@ -28,6 +28,9 @@ const GetCurrentAccident = async (req: NextApiRequest, res: NextApiResponse) => 
               dateCreated: true,
               userid: true,
               id: true,
+            },
+            orderBy: {
+              dateCreated: "desc"
             }
           }
         }

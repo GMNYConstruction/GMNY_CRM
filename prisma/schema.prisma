@@ -10,22 +10,22 @@ datasource db {
 model accidents {
   id                  Int        @id(map: "accidentsrep_pkey") @unique @default(autoincrement())
   name                String?    @db.VarChar
-  report              String?    @db.VarChar
-  efroi               String?    @db.VarChar
-  witness             String?
-  correspondence      String?
-  notice              String?
-  accidentDescription String?
-  assignedToCompany   String?
-  backToWork          String?    @db.VarChar
-  dateOfAccident      String?    @db.VarChar
-  documentFolder      String?    @db.VarChar
-  firstCheck          String?    @db.VarChar
-  lastCheck           String?    @db.VarChar
-  lastDayOfWork       String?    @db.VarChar
-  companyWeWorkedFor  String?    @db.VarChar
+  report              String?    @default("") @db.VarChar
+  efroi               String?    @default("") @db.VarChar
+  witness             String?    @default("")
+  correspondence      String?    @default("")
+  notice              String?    @default("")
+  accidentDescription String?    @default("")
+  assignedToCompany   String?    @default("")
+  backToWork          String?    @default("") @db.VarChar
+  dateOfAccident      String?    @default("") @db.VarChar
+  documentFolder      String?    @default("") @db.VarChar
+  firstCheck          String?    @default("") @db.VarChar
+  lastCheck           String?    @default("") @db.VarChar
+  lastDayOfWork       String?    @default("") @db.VarChar
+  companyWeWorkedFor  String?    @default("") @db.VarChar
   lastModified        DateTime?  @db.Timestamptz(6)
-  accidentLocation    String?    @db.VarChar
+  accidentLocation    String?    @default("") @db.VarChar
   comments            comments[]
 }
 
@@ -34,7 +34,7 @@ model comments {
   caseid      Int?
   comment     String?
   userid      Int?
-  dateCreated String?    @db.VarChar
+  dateCreated DateTime?  @db.Timestamptz(6)
   accidents   accidents? @relation(fields: [caseid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_comments_caseid_fkey")
   users       users?     @relation(fields: [userid], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_comments_userid_fkey")
 }

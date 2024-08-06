@@ -24,12 +24,11 @@ const Extended = () => {
   const [hide, setHide] = useState(false);
   const [response, setResponse] = useState("");
   const [readOnly, setReadOnly] = useState(true);
-  const today = new Date().toLocaleDateString("en-US");
   const [commentResponse, setCommentResponse] = useState("");
   const [comment, setComment] = useState({
     caseid: 0,
     comment: "",
-    dateCreated: today,
+    dateCreated: new Date(),
     userid: user?.id,
   });
   const [accident, setAccident] = useState<Accidents>({
@@ -143,7 +142,7 @@ const Extended = () => {
         ...prev,
         caseid: id,
         userid: user?.id,
-        dateCreated: today,
+        dateCreated: new Date(),
       }));
     }
   }, [accidentSelected?.id]);
@@ -449,7 +448,8 @@ const Extended = () => {
               </Button>
             </div>
 
-            {accidentSelected?.comments?.map((comment: any) => {
+            {accidentSelected?.comments?.map((comment: CommentType) => {
+              const date = new Date(comment?.dateCreated);
               return (
                 <div key={comment?.id} className="rounded-md p-2 flex flex-col gap-1 relative">
                   <h1
@@ -459,7 +459,9 @@ const Extended = () => {
                   >
                     {comment?.comment}
                   </h1>
-                  <span>{comment?.dateCreated}</span>
+                  <span>
+                    {date.toLocaleDateString()} {date?.toLocaleTimeString()}
+                  </span>
                   {comment.userid === user.id && (
                     <button
                       type="button"
