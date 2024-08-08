@@ -1,11 +1,11 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import img from "../../img/bkLogin.webp";
 import logo from "../../img/logo.png";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { notFound } from "next/navigation";
 
@@ -21,8 +21,9 @@ interface Errors {
 }
 
 export default function Home() {
-  const year = new Date().getFullYear();
   const router = useRouter();
+  const year = new Date().getFullYear();
+  const { data: session } = useSession();
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -33,6 +34,10 @@ export default function Home() {
     password: "",
     notFound: "",
   });
+
+  useEffect(() => {
+    if (session?.user) router.push("/caselist");
+  }, [session?.user]);
 
   const inputHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser((prev) => ({ ...prev, [e.target.id]: e.target.value }));
