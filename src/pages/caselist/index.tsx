@@ -4,6 +4,7 @@ import CalendarDrawer from "@/components/Calendar";
 import { Accidents } from "@/types";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
+import cross from "../../img/x.svg";
 import { TextArea } from "@/components/TextArea";
 import { useDebouncedValue } from "@/types/use-debounce";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -14,6 +15,7 @@ import Image from "next/image";
 import notFound from "../../img/noloads.svg";
 import loadingIcon from "../../img/loading.svg";
 import { Table } from "@/components/TableComponent";
+import moment from "moment";
 
 const Page = () => {
   const queryClient = useQueryClient();
@@ -45,6 +47,7 @@ const Page = () => {
         item?.companyWeWorkedFor,
         item?.dateOfAccident,
         item?.accidentLocation,
+        moment(item?.lastModified).format("M/D/YYYY HH:mm"),
         item?.documentFolder,
       ],
     }));
@@ -128,7 +131,16 @@ const Page = () => {
             }}
           />
           <Table
-            headers={["Name", "Assigned to", "Worked for", "DOL", "Accident Location", "Documents", "Action"]}
+            headers={[
+              "Name",
+              "Assigned to",
+              "Worked for",
+              "DOL",
+              "Accident Location",
+              "Last Modified",
+              "Documents",
+              "Action",
+            ]}
             values={normalizeData(accidentsPage?.accidents) as any}
           />
         </>
@@ -175,15 +187,31 @@ const Page = () => {
                 divProperties="!h-[42px] !w-[200px]"
                 properties="h-[42px]  border-2"
               />
+              <button
+                type="button"
+                onClick={() => setFilters((prev) => ({ ...prev, date: "" }))}
+                className="absolute top-0 bottom-0 my-auto right-3"
+              >
+                <Image src={cross} alt="delete" />
+              </button>
             </div>
-            <Input
-              id="search"
-              type="text"
-              placeholder="search"
-              properties="h-[42px] w-[200px]"
-              value={filters.search}
-              inputHandler={handleFilters}
-            />
+            <div className="relative">
+              <Input
+                id="search"
+                type="text"
+                placeholder="search"
+                properties="h-[42px] w-[200px]"
+                value={filters.search}
+                inputHandler={handleFilters}
+              />
+              <button
+                type="button"
+                onClick={() => setFilters((prev) => ({ ...prev, search: "" }))}
+                className="absolute top-0 bottom-0 my-auto right-3"
+              >
+                <Image src={cross} alt="delete" />
+              </button>
+            </div>
           </div>
         </div>
 

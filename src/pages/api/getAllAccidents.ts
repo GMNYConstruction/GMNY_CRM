@@ -48,7 +48,7 @@ const GetAllAccidents = async (req: NextApiRequest, res: NextApiResponse) => {
   `).join(' + ');
 
     const rawQuery = `
-    SELECT id,name,"assignedToCompany","companyWeWorkedFor", "dateOfAccident","documentFolder", "accidentDescription","accidentLocation", (${relevanceSQL}) AS relevance
+    SELECT id,name,"assignedToCompany","companyWeWorkedFor", "dateOfAccident","documentFolder", "accidentDescription","accidentLocation","lastModified", (${relevanceSQL}) AS relevance
     FROM accidents
     WHERE ${searchTerms.map((term: string) => `
       (name ILIKE '%${term}%' OR "assignedToCompany" ILIKE '%${term}%' OR "companyWeWorkedFor" ILIKE '%${term}%' OR "accidentLocation" ILIKE '%${term}%')

@@ -48,3 +48,13 @@ model users {
   status    Boolean?
   comments  comments[]
 }
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model contracts {
+  id           Int     @id @default(autoincrement())
+  from_company String  @default("") @db.VarChar
+  to_company   String? @default("") @db.VarChar
+  from_date    String? @default("") @db.VarChar
+  to_date      String? @default("") @db.VarChar
+  link         String? @default("")
+}

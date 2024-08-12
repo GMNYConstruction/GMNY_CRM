@@ -43,6 +43,7 @@ const CalendarDrawer: FC<Iprops> = ({
   let inputProps = {
     id: id,
     placeholder: placeholder,
+    value: value,
     disabled: disabled,
     className: `w-full h-10 pl-11 py-2 rounded-md border border-neutral-200 text-black text-neutral-500 text-base ${properties}`,
   };
