@@ -36,6 +36,15 @@ export interface Accidents {
   comments?: CommentType[]
 }
 
+export interface ContractsType { 
+  id: number | string,
+  from_date: string,
+  to_date: string,
+  from_company: string,
+  to_company: string,
+  link: string
+}
+
 export interface AccidentCardInterface {
   data: {
     id: number;

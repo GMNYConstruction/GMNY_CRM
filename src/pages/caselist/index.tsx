@@ -1,21 +1,21 @@
 import React, { useEffect, useMemo, useState } from "react";
-import Paggination from "@/components/Paggination";
-import CalendarDrawer from "@/components/Calendar";
 import { Accidents } from "@/types";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
-import cross from "../../img/x.svg";
 import { TextArea } from "@/components/TextArea";
+import Paggination from "@/components/Paggination";
+import CalendarDrawer from "@/components/Calendar";
+import { Table } from "@/components/TableComponent";
 import { useDebouncedValue } from "@/types/use-debounce";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { AccidentSelect, getAccidentsPage } from "@/hooks/fetch/get-accidents";
 import { useCreateAccidentMutation } from "@/hooks/mutation/accident-mutation";
+import moment from "moment";
 
 import Image from "next/image";
+import cross from "../../img/x.svg";
 import notFound from "../../img/noloads.svg";
 import loadingIcon from "../../img/loading.svg";
-import { Table } from "@/components/TableComponent";
-import moment from "moment";
 
 const Page = () => {
   const queryClient = useQueryClient();
@@ -63,7 +63,7 @@ const Page = () => {
     onSuccess: (res) => {
       queryClient.setQueryData(["accidentsPage", page, filters.search, filters.date], (old: AccidentSelect) => {
         old?.accidents?.unshift(res?.accident);
-        old?.accidents?.pop();
+        if (old?.accidents?.length === 12) old?.accidents?.pop();
         return old;
       });
       setResponse(res?.message);
@@ -111,7 +111,7 @@ const Page = () => {
     accidentCreate.mutate(accident);
   };
 
-  const WhatToDisplay = useMemo(() => {
+  const DisplayFunction = useMemo(() => {
     if (isLoadingAccidents)
       return (
         <div className="flex flex-col">
@@ -282,7 +282,7 @@ const Page = () => {
           </div>
         </form>
 
-        {WhatToDisplay}
+        {DisplayFunction}
       </div>
     </div>
   );
