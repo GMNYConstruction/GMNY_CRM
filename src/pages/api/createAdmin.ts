@@ -14,14 +14,11 @@ const CreateAdmin = async (req: NextApiRequest, res: NextApiResponse) => {
  
  if (token === false) res.status(401).json({message: "You must be signed in!"});
  else if(token?.accessLvl.toLowerCase() !== 'admin') res.status(401).json({message: "You can't perform this action!"});
-
- console.log(data)
-
+ 
  if (!data || !data.name || !data.email || !data.password || !data.accessLvl || !data.status) return res.status(400).json({message: "Data Is Missing!"})
 
  const hashedPassword = await hash(data.password, 10);
 
- 
  try{
    const result = await prisma.users.create({
         data: {

@@ -1,9 +1,9 @@
+import moment from "moment";
+import Image from "next/image";
+import DateTime from "react-datetime";
 import React, { Dispatch, FC } from "react";
 import calendar from "../img/calendar.svg";
-import DateTime from "react-datetime";
-import moment from "moment";
 import "react-datetime/css/react-datetime.css";
-import Image from "next/image";
 
 interface Iprops {
   id?: string;
@@ -43,17 +43,17 @@ const CalendarDrawer: FC<Iprops> = ({
   let inputProps = {
     id: id,
     placeholder: placeholder,
+    value: value,
     disabled: disabled,
     className: `w-full h-10 pl-11 py-2 rounded-md border border-neutral-200 text-black text-neutral-500 text-base ${properties}`,
   };
 
   return (
-    <div className={`w-[312px] relative flex flex-col ${divProperties} `}>
+    <div className={`w-[312px] relative flex flex-col ${divProperties}`}>
       <DateTime
         input={true}
         dateFormat={"M/D/YYYY"}
         timeFormat={false}
-        value={value}
         inputProps={inputProps}
         onChange={(date) => handleChange(date)}
       />

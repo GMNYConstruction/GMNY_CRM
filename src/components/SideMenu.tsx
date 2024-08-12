@@ -34,6 +34,13 @@ export const SideMenu = () => {
           </Link>
         </div>
 
+        <div className={`flex justify-between w-full px-4 py-2.5 ${route === "/contracts" ? activeClass : ""}`}>
+          <Link className="flex items-center gap-1 ext-neutral-900 text-sm font-medium leading-tight" href="/contracts">
+            <Image className="w-[20px] h-[20px]" src={files} alt="contracts" />
+            Contracts
+          </Link>
+        </div>
+
         <div className={`flex justify-between w-full px-4 py-2.5 ${route === "/admins" ? activeClass : ""}`}>
           <Link className="flex items-center gap-1 ext-neutral-900 text-sm font-medium leading-tight" href="/admins">
             <Image className="w-[20px] h-[20px]" src={admins} alt="image" />
