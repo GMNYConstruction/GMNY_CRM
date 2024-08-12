@@ -10,15 +10,21 @@ import { ContractSelect, getContractsPage } from "@/hooks/fetch/get-contracts";
 import Paggination from "@/components/Paggination";
 import { Table } from "@/components/TableComponent";
 import { ContractsType } from "@/types";
-import { useCreateContractMutation, useUpdateContractMutation } from "@/hooks/mutation/contract-mutation";
+import {
+  useCreateContractMutation,
+  useDeleteContractMutation,
+  useUpdateContractMutation,
+} from "@/hooks/mutation/contract-mutation";
 
 import cross from "../../img/x.svg";
 import notFound from "../../img/noloads.svg";
 import loadingIcon from "../../img/loading.svg";
+import ModalWindow from "@/components/ModalWindow";
 
 const Contracts = () => {
   const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
+  const [modal, setModal] = useState(false);
   const [pagesArr, setPagesArr] = useState<number[]>([1]);
   const [response, setResponse] = useState({ message: "", error: false });
   const [drawer, setDrawer] = useState({
@@ -113,6 +119,54 @@ const Contracts = () => {
     },
   });
 
+  const contractDelete = useDeleteContractMutation({
+    onSuccess: (data) => {
+      console.log(data?.id);
+      queryClient.setQueryData(
+        ["contractsPage", page, filters.search, filters.from, filters.to],
+        (old: ContractSelect) => {
+          return {
+            pages: old?.pages,
+            contracts: old?.contracts.filter((item: ContractsType) => item?.id?.toString() !== data?.id?.toString()),
+          };
+        }
+      );
+
+      setModal(false);
+      setResponse({
+        message: "Deleted successfully",
+        error: false,
+      });
+      setDocument({
+        from: "",
+        to: "",
+        fromCompany: "",
+        toCompany: "",
+        link: "",
+        id: "",
+      });
+      setTimeout(() => {
+        setResponse({
+          error: true,
+          message: "",
+        });
+      }, 5000);
+    },
+    onError: (data) => {
+      console.log(data);
+      setResponse({
+        error: true,
+        message: data?.response?.data?.message,
+      });
+      setTimeout(() => {
+        setResponse({
+          error: true,
+          message: "",
+        });
+      }, 5000);
+    },
+  });
+
   const contractUpdate = useUpdateContractMutation({
     onSuccess: (data) => {
       queryClient.setQueryData(
@@ -176,6 +230,19 @@ const Contracts = () => {
       status: true,
       id: contract?.id as string,
     });
+  };
+
+  const handleDelete = (id: string | number) => {
+    const contract = contractsPage?.contracts.find((item: any) => item.id.toString() === id.toString());
+    setDocument({
+      id: contract?.id.toString() as string,
+      from: contract?.from_date as string,
+      to: contract?.to_date as string,
+      fromCompany: contract?.from_company as string,
+      toCompany: contract?.to_company as string,
+      link: contract?.link as string,
+    });
+    setModal(true);
   };
 
   const formHandler = (e: React.FormEvent<HTMLFormElement>) => {
@@ -291,7 +358,7 @@ const Contracts = () => {
             }}
             button_two={{
               text: "Delete",
-              action: () => console.log("e"),
+              action: handleDelete,
             }}
           />
         </>
@@ -308,6 +375,23 @@ const Contracts = () => {
   return (
     <>
       <Drawer drawer={drawer} setDrawer={() => setDrawer({ id: "", status: false })} topText="Contracts">
+        <ModalWindow modal={modal} setModal={setModal}>
+          <div className="h-full w-full overflow-hidden">
+            <p className="text-black font-medium text-2xl text-center mt-9">Are you sure you want to delete?</p>
+            <div className="flex gap-8 items-center justify-center mb-4 mt-auto h-full">
+              <Button onClick={() => setModal(false)} btype="button" properties="!text-xl font-medium ">
+                Cancel
+              </Button>
+              <Button
+                btype="button"
+                onClick={() => contractDelete.mutate({ id: document?.id })}
+                properties="!text-xl font-medium bg-red-500 text-white"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+        </ModalWindow>
         <form className="flex flex-col gap-4" onSubmit={drawer.id ? formUpdate : formHandler}>
           {response?.message && response?.error && (
             <p className="text-red-500 font-medium text-base">{response?.message}</p>
