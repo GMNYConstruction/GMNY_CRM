@@ -21,6 +21,7 @@ const useUpdateSelectedContract = async (req: NextApiRequest, res: NextApiRespon
   if(data?.from_company) mutationObj['from_company'] = data?.from_company
   if(data?.to_company) mutationObj['to_company'] = data?.to_company
   if(data?.link) mutationObj['link'] = data?.link
+  if(data?.location || data?.location === '') mutationObj['location'] = data?.location
   
   try{
    const result = await prisma.contracts.update({

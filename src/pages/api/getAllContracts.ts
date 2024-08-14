@@ -22,6 +22,7 @@ const GetAllContracts = async (req: NextApiRequest, res: NextApiResponse) => {
     searchVariants.push(
       { from_company: { contains: term.toLowerCase(), mode:'insensitive' } },
       { to_company: { contains: term.toLowerCase(), mode:'insensitive' } },
+      { location: { contains: term.toLowerCase(), mode:'insensitive' } },
       ) 
     ))
 
@@ -36,6 +37,8 @@ const GetAllContracts = async (req: NextApiRequest, res: NextApiResponse) => {
     (CASE
       WHEN "from_company" ILIKE '%${term}%' THEN 1 ELSE 0 END) +
     (CASE
+      WHEN "location" ILIKE '%${term}%' THEN 1 ELSE 0 END) +
+    (CASE
       WHEN "to_company" ILIKE '%${term}%' THEN 1 ELSE 0 END)
   `).join(' + ');
 
@@ -43,7 +46,7 @@ const GetAllContracts = async (req: NextApiRequest, res: NextApiResponse) => {
     SELECT *, (${relevanceSQL}) AS relevance
     FROM contracts
     WHERE ${searchTerms.map((term: string) => `
-      ("from_company" ILIKE '%${term}%' OR "to_company" ILIKE '%${term}%')
+      ("from_company" ILIKE '%${term}%' OR "to_company" ILIKE '%${term}%' OR "location" ILIKE '%${term}%')
     `).join(' OR ')} AND ("from_date" ILIKE '%${data?.from_date?.toString()}%' AND "to_date" ILIKE '%${data?.to_date?.toString()}%') 
     ORDER BY relevance DESC, id DESC
     LIMIT ${data?.pageSize} OFFSET ${pageFetch}

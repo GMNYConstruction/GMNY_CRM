@@ -57,4 +57,5 @@ model contracts {
   from_date    String? @default("") @db.VarChar
   to_date      String? @default("") @db.VarChar
   link         String? @default("")
+  location     String? @default("")
 }
