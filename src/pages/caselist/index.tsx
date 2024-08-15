@@ -16,12 +16,16 @@ import Image from "next/image";
 import cross from "../../img/x.svg";
 import notFound from "../../img/noloads.svg";
 import loadingIcon from "../../img/loading.svg";
+import Drawer from "@/components/Drawer";
 
 const Page = () => {
   const queryClient = useQueryClient();
+  const [drawer, setDrawer] = useState({
+    status: false,
+    id: "",
+  });
   const [page, setPage] = useState(1);
   const [pagesArr, setPagesArr] = useState<number[]>([1]);
-  const [createNewAccident, setCreateNewAccident] = useState(false);
   const [response, setResponse] = useState("");
   const [filters, setFilters] = useState({
     search: "",
@@ -76,14 +80,17 @@ const Page = () => {
         documentFolder: "",
         accidentDescription: "",
       });
-      setCreateNewAccident(!createNewAccident);
+      setDrawer({
+        id: "",
+        status: false,
+      });
 
       setTimeout(() => {
         setResponse("");
       }, 3000);
     },
     onError: (data) => {
-      setResponse(data?.response?.data?.detail);
+      setResponse(data?.response?.data?.message);
       setTimeout(() => {
         setResponse("");
       }, 3000);
@@ -160,131 +167,124 @@ const Page = () => {
   };
 
   return (
-    <div className="w-full flex justify-center">
-      <div className="w-full relative py-4 px-2 flex flex-col gap-4">
-        <div className="w-full flex justify-between">
-          <div className="flex gap-2">
-            <Button
-              btype="button"
-              onClick={() => setCreateNewAccident(!createNewAccident)}
-              properties={`bg-primaryred text-white`}
-            >
-              {createNewAccident ? "Stop Creating New Accident" : "Create New Accident Case"}
-            </Button>
-            {createNewAccident && (
-              <Button btype="submit" form="accidentForm">
-                Submit New Accident
-              </Button>
-            )}
+    <>
+      <Drawer drawer={drawer} setDrawer={() => setDrawer({ id: "", status: false })} topText="Add Accident Record">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          {response && <p className="text-red-500 font-medium">{response}</p>}
+          <div className="w-full flex gap-1 flex-col">
+            <p className="text-black font-medium text-base">Full Name</p>
+            <Input id="name" value={accident.name} inputHandler={handleChange} placeholder="Name" />
           </div>
-          <div className="flex gap-4 items-center">
-            <div className="relative">
-              <CalendarDrawer
-                id="date"
-                value={filters?.date}
-                data={filters}
-                setData={setFilters}
-                divProperties="!h-[42px] !w-[200px]"
-                properties="h-[42px]  border-2"
-              />
-              <button
-                type="button"
-                onClick={() => setFilters((prev) => ({ ...prev, date: "" }))}
-                className="absolute top-0 bottom-0 my-auto right-3"
-              >
-                <Image src={cross} alt="delete" />
-              </button>
-            </div>
-            <div className="relative">
-              <Input
-                id="search"
-                type="text"
-                placeholder="search"
-                properties="h-[42px] w-[200px]"
-                value={filters.search}
-                inputHandler={handleFilters}
-              />
-              <button
-                type="button"
-                onClick={() => setFilters((prev) => ({ ...prev, search: "" }))}
-                className="absolute top-0 bottom-0 my-auto right-3"
-              >
-                <Image src={cross} alt="delete" />
-              </button>
-            </div>
+          <div className="w-full flex gap-1 flex-col">
+            <p className="text-black font-medium text-base">Assigned to</p>
+            <Input
+              id="assignedToCompany"
+              value={accident.assignedToCompany}
+              inputHandler={handleChange}
+              placeholder="Assigned to"
+            />
           </div>
-        </div>
-
-        <div>
-          <h1 className={`${response === "New Accident Created!" ? "text-green-600" : "text-red-500"}`}>{response}</h1>
-        </div>
-
-        <form
-          id="accidentForm"
-          onSubmit={handleSubmit}
-          className={`w-full flex flex-col gap-3 ${!createNewAccident && "hidden"}`}
-        >
-          <div className="relative w-full h-[250px] border border-neutral-500 rounded-md p-2 flex gap-2">
-            <div className="flex w-[50%] flex-col gap-2 justify-center">
-              <div className="grid grid-cols-[2fr,4fr] items-center">
-                <h1>Name:</h1>
-                <Input placeholder="Name" value={accident.name} inputHandler={handleChange} id="name" />
-              </div>
-              <div className="grid grid-cols-[2fr,4fr] items-center">
-                <h1>Assigned to:</h1>
-                <Input
-                  value={accident.assignedToCompany}
-                  inputHandler={handleChange}
-                  id="assignedToCompany"
-                  placeholder="Enter the name of our company"
-                />
-              </div>
-              <div className="grid grid-cols-[2fr,4fr] items-center">
-                <h1>Company We Worked For:</h1>
-                <Input
-                  value={accident.companyWeWorkedFor}
-                  inputHandler={handleChange}
-                  id="companyWeWorkedFor"
-                  placeholder="Enter the name of the company we worked for"
-                />
-              </div>
-              <div className="grid grid-cols-[2fr,4fr] items-center">
-                <h1>Date Of Accident:</h1>
-                <CalendarDrawer
-                  setData={setAccident}
-                  value={accident.dateOfAccident}
-                  divProperties="w-full h-[36px]"
-                  properties="h-[36px]"
-                  placeholder="Date of Accident"
-                  id="dateOfAccident"
-                  data={accident}
-                />
-              </div>
-              <div className="grid grid-cols-[2fr,4fr] items-center">
-                <h1>Document Folder:</h1>
-                <Input
-                  value={accident.documentFolder}
-                  inputHandler={handleChange}
-                  id="documentFolder"
-                  placeholder="Enter link to folder"
-                />
-              </div>
-            </div>
-            <div className="w-[50%] h-full flex flex-col gap-1 justify-center">
-              <h2>Description: </h2>
-              <TextArea
-                value={accident.accidentDescription}
-                id="accidentDescription"
-                placeholder="Accident Description"
-                inputHandler={handleChange}
-              />
-            </div>
+          <div className="w-full flex gap-1 flex-col">
+            <p className="text-black font-medium text-base">Company we worked for</p>
+            <Input
+              id="companyWeWorkedFor"
+              value={accident.companyWeWorkedFor}
+              inputHandler={handleChange}
+              placeholder="We worked for"
+            />
           </div>
+          <div className="w-full flex gap-1 flex-col">
+            <p className="text-black font-medium text-base">Date Of Accident</p>
+            <CalendarDrawer
+              setData={setAccident}
+              value={accident.dateOfAccident}
+              divProperties="w-full h-[36px]"
+              properties="h-[36px]"
+              placeholder="Date of Accident"
+              id="dateOfAccident"
+              data={accident}
+            />
+          </div>
+          <div className="w-full flex gap-1 flex-col">
+            <p className="text-black font-medium text-base">Accident Description</p>
+            <TextArea
+              id="accidentDescription"
+              value={accident.accidentDescription}
+              inputHandler={handleChange}
+              placeholder="Accident Description"
+            />
+          </div>
+          <Button btype="submit" properties="bg-red-500 text-white">
+            Submit
+          </Button>
         </form>
+      </Drawer>
 
-        {DisplayFunction}
+      <div className="w-full flex justify-center">
+        <div className="w-full relative py-4 px-2 flex flex-col gap-4">
+          <div className="w-full flex justify-between">
+            <div className="flex gap-2">
+              <Button
+                btype="button"
+                onClick={() =>
+                  setDrawer({
+                    id: "",
+                    status: true,
+                  })
+                }
+                properties={`bg-primaryred text-white`}
+              >
+                Create New Accident
+              </Button>
+            </div>
+            <div className="flex gap-4 items-center">
+              <div className="relative">
+                <CalendarDrawer
+                  id="date"
+                  value={filters?.date}
+                  data={filters}
+                  setData={setFilters}
+                  divProperties="!h-[42px] !w-[200px]"
+                  properties="h-[42px]  border-2"
+                />
+                <button
+                  type="button"
+                  onClick={() => setFilters((prev) => ({ ...prev, date: "" }))}
+                  className="absolute top-0 bottom-0 my-auto right-3"
+                >
+                  <Image src={cross} alt="delete" />
+                </button>
+              </div>
+              <div className="relative">
+                <Input
+                  id="search"
+                  type="text"
+                  placeholder="search"
+                  properties="h-[42px] w-[200px]"
+                  value={filters.search}
+                  inputHandler={handleFilters}
+                />
+                <button
+                  type="button"
+                  onClick={() => setFilters((prev) => ({ ...prev, search: "" }))}
+                  className="absolute top-0 bottom-0 my-auto right-3"
+                >
+                  <Image src={cross} alt="delete" />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h1 className={`${response === "New Accident Created!" ? "text-green-600" : "text-red-500"}`}>
+              {response}
+            </h1>
+          </div>
+
+          {DisplayFunction}
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
