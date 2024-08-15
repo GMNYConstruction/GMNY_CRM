@@ -39,6 +39,7 @@ export interface Accidents {
 export interface ContractsType { 
   id: number | string,
   from_date: string,
+  location: string,
   to_date: string,
   from_company: string,
   to_company: string,

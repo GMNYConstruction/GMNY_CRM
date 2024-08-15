@@ -20,6 +20,6 @@ export default withAuth(
   }
 )
 
-export const config = { matcher: ["/caselist",'/extended','/admins','/api/', '/'] }
+export const config = { matcher: ["/caselist",'/extended','/admins','/api/', '/','/contracts'] }
 
   

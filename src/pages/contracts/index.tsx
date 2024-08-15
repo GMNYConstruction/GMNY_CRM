@@ -42,11 +42,13 @@ const Contracts = () => {
     from: "",
     to: "",
     link: "",
+    location: "",
     id: "",
   });
   const [errors, setErrors] = useState({
     fromCompany: "",
     toCompany: "",
+    location: "",
     from: "",
     to: "",
     link: "",
@@ -67,7 +69,15 @@ const Contracts = () => {
   const normalizeData = (data: ContractsType[]) => {
     return data?.map((item: ContractsType) => ({
       id: item?.id,
-      tableData: [item?.id, item?.from_company, item?.to_company, item?.from_date, item?.to_date, item?.link],
+      tableData: [
+        item?.id,
+        item?.from_company,
+        item?.to_company,
+        item?.from_date,
+        item?.to_date,
+        item?.location,
+        item?.link,
+      ],
     }));
   };
 
@@ -75,10 +85,24 @@ const Contracts = () => {
     if (contractsPage) {
       setPagesArr(Array.from({ length: contractsPage.pages }, (_, i) => i + 1));
     }
+  }, [contractsPage?.pages]);
+
+  useEffect(() => {
+    if (!drawer?.status) {
+      setDocument({
+        from: "",
+        to: "",
+        fromCompany: "",
+        toCompany: "",
+        link: "",
+        location: "",
+        id: "",
+      });
+    }
     if (filters.to || filters.from) {
       setPage(1);
     }
-  }, [contractsPage?.pages, filters?.to, filters?.from]);
+  }, [drawer?.status, filters?.to, filters?.from]);
 
   const contractCreate = useCreateContractMutation({
     onSuccess: (data) => {
@@ -101,6 +125,7 @@ const Contracts = () => {
         fromCompany: "",
         toCompany: "",
         link: "",
+        location: "",
         id: "",
       });
     },
@@ -143,6 +168,7 @@ const Contracts = () => {
         fromCompany: "",
         toCompany: "",
         link: "",
+        location: "",
         id: "",
       });
       setTimeout(() => {
@@ -194,6 +220,7 @@ const Contracts = () => {
         fromCompany: "",
         toCompany: "",
         link: "",
+        location: "",
         id: "",
       });
     },
@@ -224,6 +251,7 @@ const Contracts = () => {
       to: contract?.to_date as string,
       fromCompany: contract?.from_company as string,
       toCompany: contract?.to_company as string,
+      location: contract?.location as string,
       link: contract?.link as string,
     });
     setDrawer({
@@ -240,6 +268,7 @@ const Contracts = () => {
       to: contract?.to_date as string,
       fromCompany: contract?.from_company as string,
       toCompany: contract?.to_company as string,
+      location: contract?.location as string,
       link: contract?.link as string,
     });
     setModal(true);
@@ -268,12 +297,14 @@ const Contracts = () => {
       setErrors((prev) => ({ ...prev, link: "Enter the link" }));
       err++;
     }
+
     if (err > 0) return;
 
     contractCreate.mutate({
       from_company: document.fromCompany,
       to_company: document.toCompany,
       link: document.link,
+      location: document.location,
       from_date: document.from,
       to_date: document.to,
     });
@@ -311,6 +342,8 @@ const Contracts = () => {
     if (document.link !== contract?.link) mutationObj["link"] = document.link;
     if (document.fromCompany !== contract?.from_company) mutationObj["from_company"] = document.fromCompany;
     if (document.toCompany !== contract?.to_company) mutationObj["to_company"] = document.toCompany;
+    if (document.location !== contract?.location) mutationObj["location"] = document.location;
+
     if (Object.keys(mutationObj).length === 0) {
       setResponse({
         error: true,
@@ -350,7 +383,7 @@ const Contracts = () => {
             }}
           />
           <Table
-            headers={["ID", "From Company", "To Company", "From date", "To date", "Link", "Edit", "Delete"]}
+            headers={["ID", "From Company", "To Company", "From date", "To date", "Location", "Link", "Edit", "Delete"]}
             values={normalizeData(contractsPage?.contracts) as any}
             button_one={{
               text: "Edit",
@@ -418,6 +451,18 @@ const Contracts = () => {
               id="toCompany"
             />
             {errors?.toCompany && <p className="text-red-500 font-medium text-base">{errors?.toCompany}</p>}
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <p className="text-black font-medium text-base">Location</p>
+            <Input
+              placeholder="Location"
+              properties="h-[42px]"
+              value={document.location}
+              inputHandler={handleInputs}
+              id="location"
+            />
+            {errors?.location && <p className="text-red-500 font-medium text-base">{errors?.location}</p>}
           </div>
 
           <div className="flex flex-col gap-1">
