@@ -6,17 +6,17 @@ import { widthRedirects } from "@/utils/widthRedirects";
 
 const index = () => {
   widthRedirects(
-    "https://na4.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhBFZNDAxOsEhxQDv37WVZpcSsIPVybM_svqi8dZz7StACKmRWw4vUL3ezQZXYSjEZg*&hosted=false"
+    "https://na4.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhCXpEyXmGcpumbeo-B44PMCyAajcF6FRUuA7LW9eh2GoKWC_gnpXXAWaF0zWSQKpk8*&hosted=false"
   );
 
   return (
     <div className="w-full h-full flex flex-col gap-2">
-      <Link className="hidden xs-max:flex h-fit p-2 items-center gap-2" href={"/forms/englishfull"}>
+      <p className="hidden xs-max:flex h-fit p-2 items-center gap-2">
         <Image src={icback} alt="back" />
-        English Version
-      </Link>
+        Wage form
+      </p>
       <iframe
-        src="https://na4.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhBFZNDAxOsEhxQDv37WVZpcSsIPVybM_svqi8dZz7StACKmRWw4vUL3ezQZXYSjEZg*&hosted=false"
+        src="https://na4.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhCXpEyXmGcpumbeo-B44PMCyAajcF6FRUuA7LW9eh2GoKWC_gnpXXAWaF0zWSQKpk8*&hosted=false"
         className="min-h-[460px] xs-max:!h-[86%] w-full h-full self-center"
         loading="eager"
       ></iframe>

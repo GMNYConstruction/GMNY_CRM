@@ -58,7 +58,7 @@ export const SideMenu = () => {
 
         <div
           className={`pl-4 flex flex-col gap-4 !h-0 overflow-hidden ease-in-out duration-300 ${
-            display && "!h-[200px]"
+            display && "!h-[250px]"
           }`}
         >
           <div
@@ -98,6 +98,14 @@ export const SideMenu = () => {
               href="/forms/english"
             >
               English Onboarding
+            </Link>
+          </div>
+          <div className={`flex justify-between w-full px-4 py-2.5 ${route === "/forms/wage" ? activeClass : ""}`}>
+            <Link
+              className="flex items-center gap-1 ext-neutral-900 text-sm font-medium leading-tight"
+              href="/forms/wage"
+            >
+              Wage form
             </Link>
           </div>
         </div>

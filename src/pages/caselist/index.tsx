@@ -38,6 +38,7 @@ const Page = () => {
     dateOfAccident: "",
     documentFolder: "",
     companyWeWorkedFor: "",
+    accidentLocation: "",
     assignedToCompany: "",
     lastModified: new Date(),
   });
@@ -79,6 +80,7 @@ const Page = () => {
         assignedToCompany: "",
         documentFolder: "",
         accidentDescription: "",
+        accidentLocation: "",
       });
       setDrawer({
         id: "",
@@ -170,7 +172,7 @@ const Page = () => {
     <>
       <Drawer drawer={drawer} setDrawer={() => setDrawer({ id: "", status: false })} topText="Add Accident Record">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {response && <p className="text-red-500 font-medium">{response}</p>}
+          {response && accidentCreate?.isError && <p className="text-red-500 font-medium">{response}</p>}
           <div className="w-full flex gap-1 flex-col">
             <p className="text-black font-medium text-base">Full Name</p>
             <Input id="name" value={accident.name} inputHandler={handleChange} placeholder="Name" />
@@ -194,6 +196,15 @@ const Page = () => {
             />
           </div>
           <div className="w-full flex gap-1 flex-col">
+            <p className="text-black font-medium text-base">Company we worked for</p>
+            <Input
+              id="accidentLocation"
+              value={accident.accidentLocation}
+              inputHandler={handleChange}
+              placeholder="Accident Location"
+            />
+          </div>
+          <div className="w-full flex gap-1 flex-col">
             <p className="text-black font-medium text-base">Date Of Accident</p>
             <CalendarDrawer
               setData={setAccident}
@@ -205,6 +216,17 @@ const Page = () => {
               data={accident}
             />
           </div>
+
+          <div className="w-full flex gap-1 flex-col">
+            <p className="text-black font-medium text-base">Company we worked for</p>
+            <Input
+              id="documentFolder"
+              value={accident.documentFolder}
+              inputHandler={handleChange}
+              placeholder="Folder Link"
+            />
+          </div>
+
           <div className="w-full flex gap-1 flex-col">
             <p className="text-black font-medium text-base">Accident Description</p>
             <TextArea
