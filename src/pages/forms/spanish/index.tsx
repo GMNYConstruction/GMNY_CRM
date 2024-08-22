@@ -2,8 +2,12 @@ import Link from "next/link";
 import React from "react";
 import icback from "../../../img/ic_back.svg";
 import Image from "next/image";
+import { widthRedirects } from "@/utils/widthRedirects";
 
 const index = () => {
+  widthRedirects(
+    "https://na4.documents.adobe.com/public/esignWidget?wid=CBFCIBAA3AAABLblqZhAaDAPynCP2_zhzZze9l-cxxEFEg8nCq7p0pXbeLYpyCGBl4CTZhHYizJN33k7mDHA*&hosted=false"
+  );
   return (
     <div className="w-full h-full flex flex-col gap-2">
       <Link className="hidden xs-max:flex h-fit p-2 items-center gap-2" href={"/forms/english"}>

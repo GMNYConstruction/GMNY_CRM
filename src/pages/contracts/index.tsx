@@ -69,15 +69,7 @@ const Contracts = () => {
   const normalizeData = (data: ContractsType[]) => {
     return data?.map((item: ContractsType) => ({
       id: item?.id,
-      tableData: [
-        item?.id,
-        item?.from_company,
-        item?.to_company,
-        item?.from_date,
-        item?.to_date,
-        item?.location,
-        item?.link,
-      ],
+      tableData: [item?.from_company, item?.to_company, item?.from_date, item?.to_date, item?.location, item?.link],
     }));
   };
 
@@ -383,7 +375,7 @@ const Contracts = () => {
             }}
           />
           <Table
-            headers={["ID", "From Company", "To Company", "From date", "To date", "Location", "Link", "Edit", "Delete"]}
+            headers={["From Company", "To Company", "From date", "To date", "Location", "Link", "Edit", "Delete"]}
             values={normalizeData(contractsPage?.contracts) as any}
             button_one={{
               text: "Edit",
