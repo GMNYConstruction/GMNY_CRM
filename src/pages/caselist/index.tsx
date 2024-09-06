@@ -196,7 +196,7 @@ const Page = () => {
             />
           </div>
           <div className="w-full flex gap-1 flex-col">
-            <p className="text-black font-medium text-base">Company we worked for</p>
+            <p className="text-black font-medium text-base">Accident Location</p>
             <Input
               id="accidentLocation"
               value={accident.accidentLocation}
@@ -218,7 +218,7 @@ const Page = () => {
           </div>
 
           <div className="w-full flex gap-1 flex-col">
-            <p className="text-black font-medium text-base">Company we worked for</p>
+            <p className="text-black font-medium text-base">Document Folder</p>
             <Input
               id="documentFolder"
               value={accident.documentFolder}
