@@ -4,11 +4,13 @@ import { mkConfig, generateCsv, asString, asBlob } from "export-to-csv";
 import { Buffer } from "node:buffer";   
 import { Readable } from "stream"; 
 import { getGoogleDrive } from "./google";
+import { combineSlices } from "@reduxjs/toolkit";
+import { constrainedMemory } from "node:process";
  
-const uploadFile = async (file: any, name = 'test.csv' ) => {
+const uploadFile = async (file: any, name = 'name missing' ) => {
     const drive = await getGoogleDrive();
      
-    drive.files.create({
+   return drive.files.create({
         requestBody: {
             name: name,    
             mimeType: "text/csv",
@@ -19,7 +21,7 @@ const uploadFile = async (file: any, name = 'test.csv' ) => {
             mimeType:'text/csv'
         },
         fields:'id'
-    }).then((res)=> console.log(res.data.id))
+    }).then((res)=> console.log(res.data.id)).catch((err)=> {throw new Error(err)})
 }
 
 const BackUp = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -47,14 +49,15 @@ const BackUp = async (req: NextApiRequest, res: NextApiResponse) => {
     const date = new Date()
     const formattedDate = `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`;
     
-    uploadFile(csvAccidents, `accidents ${formattedDate}.csv`)
-    uploadFile(csvComments, `comments ${formattedDate}.csv`)
-    uploadFile(csvUsers, `users ${formattedDate}.csv`)
-    uploadFile(csvContracts, `contracts ${formattedDate}.csv`)
+    uploadFile(csvAccidents, `accidents ${formattedDate}`)
+    uploadFile(csvComments, `comments ${formattedDate}`)
+    uploadFile(csvUsers, `users ${formattedDate}`)
+    uploadFile(csvContracts, `contracts ${formattedDate}`)
 
     return res.status(200).json({message: 'Back up succesful' })
  }
  catch(err) {
+    console.log(err)
     return res.status(400).json({message: "Error occured", error: err})
  }
  
