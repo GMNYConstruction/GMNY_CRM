@@ -14,14 +14,14 @@ const uploadFile = async (file: any, name = 'name missing' ) => {
         requestBody: {
             name: name,    
             mimeType: "text/csv",
-            parents:['1oCXqWP4QSK-T4HMDoCBRJtAcv6VdHUMx']
+            parents:[`${process.env.BACKUP_FOLDER_ID}`]
         },
         media:{
             body: file,  
             mimeType:'text/csv'
         },
         fields:'id'
-    }).then((res)=> console.log(res.data.id)).catch((err)=> {throw new Error(err)})
+    }).catch((err)=> {throw new Error(err)})
 }
 
 const BackUp = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -49,9 +49,9 @@ const BackUp = async (req: NextApiRequest, res: NextApiResponse) => {
     const date = new Date()
     const formattedDate = `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`;
     
-    uploadFile(csvAccidents, `accidents ${formattedDate}`)
-    uploadFile(csvComments, `comments ${formattedDate}`)
     uploadFile(csvUsers, `users ${formattedDate}`)
+    uploadFile(csvComments, `comments ${formattedDate}`)
+    uploadFile(csvAccidents, `accidents ${formattedDate}`)
     uploadFile(csvContracts, `contracts ${formattedDate}`)
 
     return res.status(200).json({message: 'Back up succesful' })
