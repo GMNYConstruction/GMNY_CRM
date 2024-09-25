@@ -20,16 +20,17 @@ const CreateNewComment = async (req: NextApiRequest, res: NextApiResponse) => {
 
  try{
     
-    const comment = await prisma.comments.create({
+    const result = await prisma.$transaction([
+      prisma.comments.create({
         data: {
           caseid: data.caseid,
           comment: data.comment,
           userid: data.userid,
           dateCreated: data.dateCreated,
         },
-    });
+    }),
 
-    const updateCase = await prisma.accidents.update({
+      prisma.accidents.update({
       where: {
         id: data.caseid,
       },
@@ -38,8 +39,9 @@ const CreateNewComment = async (req: NextApiRequest, res: NextApiResponse) => {
       }
       
     })
+    ])
 
-    return res.status(200).json({message: "Comment posted successfuly!", id: comment.id, case: updateCase, comment: comment});
+    return res.status(200).json({message: "Comment posted successfuly!", id: result[0]?.id, case: result[1], comment: result[0]});
 
  }
  catch(err) {
