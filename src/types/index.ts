@@ -76,3 +76,14 @@ export interface AuthUser {
   email: string,
   status: boolean | null,
 }
+
+export interface FilesStandart {
+  path: string,
+  preview: string,
+  lastModified: number,
+  lastModifiedDate: Date | string,
+  name: string,
+  size: number,
+  type: string,
+  webkitRelativePath: string,
+}

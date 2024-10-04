@@ -13,6 +13,7 @@ import { getCurrentAccident } from "@/hooks/fetch/get-accidents";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCreateCommentMutation, useDeleteCommentMutation } from "@/hooks/mutation/comment-mutation";
 import { useUpdateAccidentMutation } from "@/hooks/mutation/accident-mutation";
+import { DropZone } from "@/components/DropZone";
 
 const Extended = () => {
   const router = useRouter();
@@ -20,6 +21,7 @@ const Extended = () => {
   const queryClient = useQueryClient();
   const { data: session } = useSession();
   const user = session?.user as AuthUser;
+  const [files, setFiles] = useState([]);
   const componentRef = useRef<any>(null);
   const [hide, setHide] = useState(false);
   const [response, setResponse] = useState("");
@@ -376,6 +378,8 @@ const Extended = () => {
                   </div>
                 </div>
               </div>
+
+              <DropZone files={files} setFiles={(e: any) => setFiles(e)} />
 
               <div className={`w-full min-h-[30%] max-h-[45%] py-4 px-2 flex gap-2 ${hide && "flex-col"}`}>
                 <div className={`w-[50%] ${hide && "w-[100%]"}`}>
