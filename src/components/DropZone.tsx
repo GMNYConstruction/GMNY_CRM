@@ -19,7 +19,6 @@ export const DropZone = ({ setFiles, files, className }: FileDropProps) => {
         });
         return newFile;
       });
-      console.log(files, adaptedFiles);
       let merged = [...files, ...adaptedFiles] as any;
       setFiles(merged);
     },
