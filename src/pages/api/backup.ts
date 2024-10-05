@@ -6,7 +6,7 @@ import { Readable } from "stream";
 import { getGoogleDrive } from "./google";
  
 const uploadFile = async (file: any, name = 'name missing' ) => {
-    const drive = await getGoogleDrive();
+   const drive = await getGoogleDrive();
      
    return drive.files.create({
         requestBody: {

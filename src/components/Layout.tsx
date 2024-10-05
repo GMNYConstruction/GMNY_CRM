@@ -1,7 +1,6 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { SideMenu } from "./SideMenu";
 import { useSession } from "next-auth/react";
-import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/router";
 
 type PropsType = {
@@ -11,13 +10,19 @@ type PropsType = {
 const Layout = ({ children }: PropsType) => {
   const route = useRouter();
   const { data: session } = useSession();
+  const isLoggedIn = !!session?.user;
+  const isHomePage = route.pathname === "/";
 
   return (
-    <div className="flex h-screen w-screen !overflow-x-hidden">
-      {session?.user && route.pathname !== "/" && <SideMenu />}
+    <div className="flex h-screen w-screen overflow-hidden">
+      {isLoggedIn && !isHomePage && (
+        <div className="h-screen w-fit">
+          <SideMenu />
+        </div>
+      )}
       <div
-        className={`w-full h-full ${
-          session?.user && "bg-white rounded-tl-[32px] border-l border-t border-neutral-200 px-8 py-4"
+        className={`flex-grow h-full overflow-y-auto ${
+          isLoggedIn ? "bg-white rounded-tl-[32px] border-l border-t border-neutral-200 px-8 py-4" : ""
         }`}
       >
         {children}

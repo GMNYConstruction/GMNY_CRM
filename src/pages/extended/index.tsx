@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { Accidents, CommentType, AuthUser } from "@/types";
+import { Accidents, CommentType, AuthUser, FilesStandart } from "@/types";
 import { Input } from "@/components/Input";
 import CalendarDrawer from "@/components/Calendar";
 import bin from "../../img/rubbish-bin-svgrepo-com.svg";
@@ -13,6 +13,9 @@ import { getCurrentAccident } from "@/hooks/fetch/get-accidents";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCreateCommentMutation, useDeleteCommentMutation } from "@/hooks/mutation/comment-mutation";
 import { useUpdateAccidentMutation } from "@/hooks/mutation/accident-mutation";
+import { DropZone } from "@/components/DropZone";
+import { useUploadFiles } from "@/hooks/mutation/files-upload";
+import loadIcon from "../../img/loading.svg";
 
 const Extended = () => {
   const router = useRouter();
@@ -20,9 +23,14 @@ const Extended = () => {
   const queryClient = useQueryClient();
   const { data: session } = useSession();
   const user = session?.user as AuthUser;
+  const [files, setFiles] = useState<FilesStandart[]>([]);
   const componentRef = useRef<any>(null);
   const [hide, setHide] = useState(false);
-  const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [response, setResponse] = useState({
+    error: false,
+    message: "",
+  });
   const [readOnly, setReadOnly] = useState(true);
   const [commentResponse, setCommentResponse] = useState("");
   const [comment, setComment] = useState({
@@ -112,24 +120,37 @@ const Extended = () => {
     },
   });
 
+  const uploadFilesToGoogle = useUploadFiles({
+    onSuccess: (res) => {
+      setFiles([]);
+      setLoading(false);
+    },
+    onError: (err) => {
+      console.log(err);
+      setLoading(false);
+      setResponse({ error: true, message: err?.response?.data?.message });
+      setTimeout(() => setResponse({ error: true, message: "" }), 5000);
+    },
+  });
+
   const accidentUpdate = useUpdateAccidentMutation({
     onSuccess: (res) => {
       queryClient.setQueryData(["accidentSelected"], (old: Accidents) => {
         return { ...old, ...res?.accident };
       });
-      setResponse("Accident Updated Successfuly!");
+      setResponse({ error: false, message: "Accident Updated Successfuly!" });
       setReadOnly(!readOnly);
       setTimeout(() => {
-        setResponse("");
+        setResponse({ error: false, message: "" });
       }, 5000);
     },
     onError: (data) => {
       console.log(data);
       setReadOnly(!readOnly);
       accidentSelected && setAccident(accidentSelected);
-      setResponse("Error occured");
+      setResponse({ error: true, message: "Error occured" });
       setTimeout(() => {
-        setResponse("");
+        setResponse({ error: false, message: "Accident Updated Successfuly!" });
       }, 5000);
     },
   });
@@ -183,6 +204,12 @@ const Extended = () => {
     commentDelete.mutate({ id: id, userid: user.id });
   };
 
+  const uploadFiles = () => {
+    let directory = accidentSelected?.documentFolder?.split("/")?.pop()?.split("?")[0];
+    setLoading(true);
+    uploadFilesToGoogle.mutate({ files: files, directory: directory });
+  };
+
   return (
     <div>
       <div
@@ -193,9 +220,7 @@ const Extended = () => {
       <div className="flex flex-col w-full justify-center items-center" ref={componentRef}>
         <form onSubmit={formHandler} className="flex flex-col  w-[90%] justify-center">
           <div className={`flex w-full justify-between gap-4 px-2 ${hide && "hidden"}`}>
-            <h1 className={`${response === "Accident Updated Successfuly!" ? "text-green-600" : "text-red-500"}`}>
-              {response}
-            </h1>
+            <h1 className={`${!response?.error ? "text-green-700" : "text-red-700"}`}>{response?.message}</h1>
 
             <div className="flex gap-4">
               {!readOnly && (
@@ -206,7 +231,7 @@ const Extended = () => {
               <Button btype="button" onClick={handlePrint} properties={`${!readOnly && "hidden"} w-[250px]`}>
                 Save PDF
               </Button>
-              <Button btype="button" onClick={handleEditButton} properties="text-white bg-primaryred w-[250px]">
+              <Button btype="button" onClick={handleEditButton} properties="text-white bg-red-700 w-[250px]">
                 {readOnly ? "Edit" : "Cancel"}
               </Button>
             </div>
@@ -376,6 +401,23 @@ const Extended = () => {
                   </div>
                 </div>
               </div>
+              <div className={`${hide && "hidden"} flex flex-col justify-center gap-4 relative`}>
+                <DropZone files={files} setFiles={(e: any) => setFiles(e)} />
+                <div className="flex justify-center gap-10">
+                  <Button onClick={uploadFiles} btype="button" properties="w-[200px] bg-green-700 text-white">
+                    Upload
+                  </Button>
+                  <Button btype="button" onClick={() => setFiles([])} properties="w-[200px] bg-red-700 text-white">
+                    Delete All
+                  </Button>
+                </div>
+
+                {loading && (
+                  <div className="w-full h-[calc(100%+20px)] absolute !bg-black/50 rounded-sm flex">
+                    <Image className="mx-auto my-auto inset-0 self-center animate-spin" src={loadIcon} alt="loading" />
+                  </div>
+                )}
+              </div>
 
               <div className={`w-full min-h-[30%] max-h-[45%] py-4 px-2 flex gap-2 ${hide && "flex-col"}`}>
                 <div className={`w-[50%] ${hide && "w-[100%]"}`}>
@@ -433,7 +475,7 @@ const Extended = () => {
           <h1 className="w-[35%]">Comments: </h1>
           <div className="flex flex-col gap-3">
             <div className={`flex flex-col gap-2 ${hide && "hidden"}`}>
-              <h1 className={`${commentResponse.toLowerCase() === "posted" ? "text-green-600" : "text-red-500"}`}>
+              <h1 className={`${commentResponse.toLowerCase() === "posted" ? "text-green-700" : "text-red-700"}`}>
                 {commentResponse}
               </h1>
               <TextArea
@@ -443,7 +485,7 @@ const Extended = () => {
                 id="comment"
                 inputHandler={handleCommentChange}
               />
-              <Button btype="submit" properties={`bg-primaryred text-white`}>
+              <Button btype="submit" properties={`bg-red-700 text-white`}>
                 Post comment
               </Button>
             </div>
