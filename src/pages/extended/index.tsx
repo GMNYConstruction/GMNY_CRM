@@ -403,7 +403,7 @@ const Extended = () => {
               </div>
               <div className={`${hide && "hidden"} flex flex-col justify-center gap-4 relative`}>
                 <DropZone files={files} setFiles={(e: any) => setFiles(e)} />
-                <div className="flex justify-center gap-10">
+                <div className={`hidden justify-center gap-10 ${files.length > 0 && "!flex"}`}>
                   <Button onClick={uploadFiles} btype="button" properties="w-[200px] bg-green-700 text-white">
                     Upload
                   </Button>

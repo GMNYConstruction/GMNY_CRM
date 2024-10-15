@@ -1,9 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "../../../prisma"; 
-import { mkConfig, generateCsv, asString, asBlob } from "export-to-csv"; 
+import { mkConfig, generateCsv, asString } from "export-to-csv"; 
 import { Buffer } from "node:buffer";   
 import { Readable } from "stream"; 
 import { getGoogleDrive } from "./google";
+
+export const dynamic = 'force-dynamic';
  
 const uploadFile = async (file: any, name = 'name missing' ) => {
    const drive = await getGoogleDrive();
@@ -22,7 +24,7 @@ const uploadFile = async (file: any, name = 'name missing' ) => {
     }).catch((err)=> {throw new Error(err)})
 }
 
-const BackUp = async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function GET(req: NextApiRequest, res: NextApiResponse) {
  
  if(req.method !== "GET") return res.status(400).json({message: "Wrong Method"})
 
@@ -47,12 +49,12 @@ const BackUp = async (req: NextApiRequest, res: NextApiResponse) => {
     const date = new Date()
     const formattedDate = `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getDate().toString().padStart(2, '0')}/${date.getFullYear()}`;
     
-    uploadFile(csvUsers, `users ${formattedDate}`)
-    uploadFile(csvComments, `comments ${formattedDate}`)
-    uploadFile(csvAccidents, `accidents ${formattedDate}`)
-    uploadFile(csvContracts, `contracts ${formattedDate}`)
+    await uploadFile(csvUsers, `users ${formattedDate}`).catch((err)=> res.status(400).json({message: 'Error occured', err: err}))
+    await uploadFile(csvComments, `comments ${formattedDate}`).catch((err)=> res.status(400).json({message: 'Error occured', err: err}))
+    await uploadFile(csvAccidents, `accidents ${formattedDate}`).catch((err)=> res.status(400).json({message: 'Error occured', err: err}))
+    await uploadFile(csvContracts, `contracts ${formattedDate}`).catch((err)=> res.status(400).json({message: 'Error occured', err: err}))
 
-    return res.status(200).json({message: 'Back up succesful' })
+    return res.status(200).json({message: 'Back up succesful'})
  }
  catch(err) {
     console.log(err)
@@ -61,5 +63,3 @@ const BackUp = async (req: NextApiRequest, res: NextApiResponse) => {
  
 
 };
-
-export default BackUp;
