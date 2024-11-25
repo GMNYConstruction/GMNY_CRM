@@ -197,6 +197,8 @@ const Extended = () => {
       }, 4500);
     }
 
+    setComment((prev) => ({ ...prev, dateCreated: new Date() }));
+
     commentCreate.mutate(comment);
   };
 
@@ -305,9 +307,9 @@ const Extended = () => {
 
                   <div className="flex items-center">
                     <a
-                      href={accident.documentFolder}
-                      className={`${
-                        readOnly ? "w-[40%]" : "w-[20%]"
+                      href={accidentSelected?.documentFolder}
+                      className={`${readOnly ? "w-[40%]" : "w-[20%]"} ${
+                        !accidentSelected?.documentFolder && readOnly && "hidden"
                       } text-blue-500 font-medium text-lg underline underline-offset-2`}
                       target="_blank"
                     >
@@ -401,7 +403,12 @@ const Extended = () => {
                   </div>
                 </div>
               </div>
-              <div className={`${hide && "hidden"} flex flex-col justify-center gap-4 relative`}>
+
+              <div
+                className={`${hide && "hidden"} ${
+                  !accidentSelected?.documentFolder && "hidden"
+                } flex flex-col justify-center gap-4 relative`}
+              >
                 <DropZone files={files} setFiles={(e: any) => setFiles(e)} />
                 <div className={`hidden justify-center gap-10 ${files.length > 0 && "!flex"}`}>
                   <Button onClick={uploadFiles} btype="button" properties="w-[200px] bg-green-700 text-white">
@@ -413,7 +420,7 @@ const Extended = () => {
                 </div>
 
                 {loading && (
-                  <div className="w-full h-[calc(100%+20px)] absolute !bg-black/50 rounded-sm flex">
+                  <div className="w-full h-full absolute !bg-black/50 rounded-sm flex">
                     <Image className="mx-auto my-auto inset-0 self-center animate-spin" src={loadIcon} alt="loading" />
                   </div>
                 )}
