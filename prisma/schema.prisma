@@ -60,3 +60,12 @@ model contracts {
   link         String? @default("")
   location     String? @default("")
 }
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model backups {
+  id        Int     @id @default(autoincrement())
+  users     String? @default("") @db.VarChar
+  contracts String? @default("") @db.VarChar
+  comments  String? @default("") @db.VarChar
+  accidents String? @default("") @db.VarChar
+}

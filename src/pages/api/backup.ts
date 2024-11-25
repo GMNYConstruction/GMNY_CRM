@@ -4,52 +4,39 @@ import { mkConfig, generateCsv, asString } from "export-to-csv";
 import { Buffer } from "node:buffer";
 import { Readable } from "stream";
 import { getGoogleDrive } from "./google";
-import fs from "fs";
-import path from "path";
 
-const BACKUP_FILE_IDS_PATH = "./backupFileIds.json";
-
-// Helper to ensure the JSON file and its directory exist
-const ensureBackupFileExists = () => {
-    const directoryPath = path.dirname(BACKUP_FILE_IDS_PATH);
-
-    // Ensure the directory exists
-    if (!fs.existsSync(directoryPath)) {
-        fs.mkdirSync(directoryPath, { recursive: true }); // Create the directory
+const readBackupFileIds = async () => {
+    const backup = await prisma.backups.findFirst(); // Fetch the first (or only) row
+    if (!backup) {
+        // If no row exists, initialize one
+        return await prisma.backups.create({
+            data: {
+                accidents: "",
+                comments: "",
+                users: "",
+                contracts: "",
+            },
+        });
     }
-
-    // Ensure the file exists
-    if (!fs.existsSync(BACKUP_FILE_IDS_PATH)) {
-        fs.writeFileSync(BACKUP_FILE_IDS_PATH, JSON.stringify({}, null, 2)); // Create an empty JSON file
-    }
+    return backup;
 };
 
-// Helper to read the JSON file
-const readBackupFileIds = (): Record<string, string> => {
-    ensureBackupFileExists(); // Ensure the file exists before reading
-    return JSON.parse(fs.readFileSync(BACKUP_FILE_IDS_PATH, "utf-8"));
-};
-
-// Helper to write to the JSON file
-const writeBackupFileIds = (fileIds: Record<string, string>) => {
-    ensureBackupFileExists(); // Ensure the file exists before writing
-    fs.writeFileSync(BACKUP_FILE_IDS_PATH, JSON.stringify(fileIds, null, 2));
+const writeBackupFileId = async (column: string, fileId: string) => {
+    await prisma.backups.updateMany({
+        data: { [column]: fileId },
+    });
 };
 
 // Function to upload or update a file
-const uploadOrUpdateFile = async (file: any, name: string) => {
+const uploadOrUpdateFile = async (file: any, name: string, backup: any) => {
     const drive = await getGoogleDrive();
-    const fileIds = readBackupFileIds();
-    const tableName = name.split(" ")[0]
-    let fileId = fileIds[tableName];
-
-    //if file exists just procced with update
-    const isFileExist = await drive.files.get({fileId}).catch(()=> false)
-
-    if (fileIds[tableName] && isFileExist) {
+    const columnName = name.split(" ")[0] as "comments" || "users" || "accidents" || "contracts"
+    const isFileExist = await drive.files.get(backup[columnName]).catch(()=> false)
+  
+    if (backup[columnName] && isFileExist) {
         // Update existing file
         return drive.files.update({
-            fileId: fileIds[tableName],
+            fileId: backup[columnName],
             requestBody:{
                 name,
             },
@@ -73,9 +60,10 @@ const uploadOrUpdateFile = async (file: any, name: string) => {
             fields: "id",
         }).catch((err) => { throw new Error(err); });
 
-        // Save the new file ID to the JSON file
-        fileIds[tableName] = response.data.id as any;
-        writeBackupFileIds(fileIds);
+        // Save the new file ID to the table
+        const fileId = response.data.id as string;
+
+        writeBackupFileId(columnName, fileId).catch((err)=> err)
 
         return response;
     }
@@ -104,11 +92,12 @@ export default async function GET(req: NextApiRequest, res: NextApiResponse) {
 
         const date = new Date();
         const formattedDate = `${(date.getMonth() + 1).toString().padStart(2, "0")}/${date.getDate().toString().padStart(2, "0")}/${date.getFullYear()}`;
+        const backupIds= await readBackupFileIds();
 
-        await uploadOrUpdateFile(csvUsers, `users ${formattedDate}`).catch((err) => res.status(400).json({ message: "Error occurred", err: err }));
-        await uploadOrUpdateFile(csvComments, `comments ${formattedDate}`).catch((err) => res.status(400).json({ message: "Error occurred", err: err }));
-        await uploadOrUpdateFile(csvAccidents, `accidents ${formattedDate}`).catch((err) => res.status(400).json({ message: "Error occurred", err: err }));
-        await uploadOrUpdateFile(csvContracts, `contracts ${formattedDate}`).catch((err) => res.status(400).json({ message: "Error occurred", err: err }));
+        await uploadOrUpdateFile(csvUsers, `users ${formattedDate}`, backupIds).catch((err) => res.status(400).json({ message: "Error occurred", err: err }));
+        await uploadOrUpdateFile(csvComments, `comments ${formattedDate}`,backupIds).catch((err) => res.status(400).json({ message: "Error occurred", err: err }));
+        await uploadOrUpdateFile(csvAccidents, `accidents ${formattedDate}`,backupIds).catch((err) => res.status(400).json({ message: "Error occurred", err: err }));
+        await uploadOrUpdateFile(csvContracts, `contracts ${formattedDate}`,backupIds).catch((err) => res.status(400).json({ message: "Error occurred", err: err }));
 
         return res.status(200).json({ message: "Backup successful" });
     } catch (err) {
